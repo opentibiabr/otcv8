@@ -1,0 +1,9 @@
+Module
+  name: client_mobile
+  description: Handles the mobile interface for smartphones
+  author: otclientv8
+  website: http://docs.opentibiabr.com
+  sandboxed: true
+  scripts: [ mobile ]
+  @onLoad: init()
+  @onUnload: terminate()

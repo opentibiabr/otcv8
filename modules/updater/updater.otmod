@@ -1,0 +1,12 @@
+Module
+  name: updater
+  description: Updates client
+  author: opentibiabr@outlook.com
+  website: otclientv8
+  reloadable: false
+  scripts: [ updater ]
+  dependencies: [ client_locales, client_styles, client_textedit ]
+  @onUnload: Updater.terminate()
+
+  load-later:
+    - client_background

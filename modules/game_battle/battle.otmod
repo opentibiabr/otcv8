@@ -1,0 +1,9 @@
+Module
+  name: game_battle
+  description: Manage battle window (new)
+  author: opentibiabr@outlook.com
+  website: docs.opentibiabr.com
+  sandboxed: true
+  scripts: [ battle ]
+  @onLoad: init()
+  @onUnload: terminate()

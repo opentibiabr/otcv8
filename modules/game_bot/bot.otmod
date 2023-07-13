@@ -1,0 +1,8 @@
+Module
+  name: game_bot
+  description: Advanced OTClientV8 Bot
+  author: opentibiabr@outlook.com
+  sandboxed: true
+  scripts: [ bot ]
+  @onLoad: init()
+  @onUnload: terminate()
