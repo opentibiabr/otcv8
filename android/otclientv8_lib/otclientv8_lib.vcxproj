@@ -142,25 +142,25 @@
     <IncludePath>$(LLVMToolchainPrebuiltRoot)\lib64\clang\$(LLVMVersion)\include;C:\android\include;</IncludePath>
     <LibraryPath>C:\android\lib;</LibraryPath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" >
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <UseMultiToolTask>true</UseMultiToolTask>
     <TargetName>libotclientv8</TargetName>
     <IncludePath>$(LLVMToolchainPrebuiltRoot)\lib64\clang\$(LLVMVersion)\include;C:\android\include;</IncludePath>
     <LibraryPath>C:\android\lib64;</LibraryPath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" >
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <UseMultiToolTask>true</UseMultiToolTask>
     <TargetName>libotclientv8</TargetName>
     <IncludePath>$(LLVMToolchainPrebuiltRoot)\lib64\clang\$(LLVMVersion)\include;C:\android\include;</IncludePath>
     <LibraryPath>C:\android\lib64;</LibraryPath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'" >
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <UseMultiToolTask>true</UseMultiToolTask>
     <TargetName>libotclientv8</TargetName>
     <IncludePath>$(LLVMToolchainPrebuiltRoot)\lib64\clang\$(LLVMVersion)\include;C:\android\include;</IncludePath>
     <LibraryPath>C:\android\lib;</LibraryPath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'" >
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <UseMultiToolTask>true</UseMultiToolTask>
     <TargetName>libotclientv8</TargetName>
     <IncludePath>$(LLVMToolchainPrebuiltRoot)\lib64\clang\$(LLVMVersion)\include;C:\android\include;</IncludePath>
@@ -240,7 +240,7 @@
     <Link>
       <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL;unwind</LibraryDependencies>
       <AdditionalOptions>-lm -lz -latomic</AdditionalOptions>
-      <AdditionalDependencies>C:\android\lib\libboost_system.a;C:\android\lib\libvorbisfile.a;C:\android\lib\libvorbis.a;C:\android\lib\libssl.a;C:\android\lib\libpng.a;C:\android\lib\libphysfs.a;C:\android\lib\libopenal.a;C:\android\lib\libogg.a;C:\android\lib\libluajit.a;C:\android\lib\libcrypto.a;C:\android\lib\libzip.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\android\lib\libvorbisfile.a;C:\android\lib\libvorbis.a;C:\android\lib\libssl.a;C:\android\lib\libpng.a;C:\android\lib\libphysfs.a;C:\android\lib\libopenal.a;C:\android\lib\libogg.a;C:\android\lib\libluajit.a;C:\android\lib\libcrypto.a;C:\android\lib\libzip.a;%(AdditionalDependencies)</AdditionalDependencies>
       <SharedLibrarySearchPath>C:\android\lib;%(SharedLibrarySearchPath)</SharedLibrarySearchPath>
       <AdditionalLibraryDirectories>C:\android\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
@@ -268,7 +268,7 @@
     <Link>
       <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL;unwind;atomic</LibraryDependencies>
       <AdditionalOptions>-lm -lz -latomic</AdditionalOptions>
-      <AdditionalDependencies>C:\android\lib\libboost_system.a;C:\android\lib\libvorbisfile.a;C:\android\lib\libvorbis.a;C:\android\lib\libssl.a;C:\android\lib\libpng.a;C:\android\lib\libphysfs.a;C:\android\lib\libopenal.a;C:\android\lib\libogg.a;C:\android\lib\libluajit.a;C:\android\lib\libcrypto.a;C:\android\lib\libzip.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\android\lib\libvorbisfile.a;C:\android\lib\libvorbis.a;C:\android\lib\libssl.a;C:\android\lib\libpng.a;C:\android\lib\libphysfs.a;C:\android\lib\libopenal.a;C:\android\lib\libogg.a;C:\android\lib\libluajit.a;C:\android\lib\libcrypto.a;C:\android\lib\libzip.a;%(AdditionalDependencies)</AdditionalDependencies>
       <SharedLibrarySearchPath>C:\android\lib;%(SharedLibrarySearchPath)</SharedLibrarySearchPath>
       <AdditionalLibraryDirectories>C:\android\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
@@ -276,7 +276,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>$(SolutionDir)..\src\android\pch.h</PrecompiledHeaderFile>
       <CompileAs>CompileAsCpp</CompileAs>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <AdditionalOptions>-std=c++20 %(AdditionalOptions)</AdditionalOptions>
@@ -288,7 +288,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>$(SolutionDir)..\src\android\pch.h</PrecompiledHeaderFile>
       <CompileAs>CompileAsCpp</CompileAs>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <AdditionalOptions>-std=c++20 %(AdditionalOptions)</AdditionalOptions>
@@ -300,25 +300,57 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>$(SolutionDir)..\src\android\pch.h</PrecompiledHeaderFile>
       <CompileAs>CompileAsCpp</CompileAs>
+      <ExceptionHandling>Enabled</ExceptionHandling>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <CLanguageStandard>c11</CLanguageStandard>
+      <CppLanguageStandard>c++1z</CppLanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\src;C:\android\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ANDROID;OPENGL_ES;OTCLIENT;FW_NET;FW_XML;FW_PROXY;NOMINMAX;NDEBUG;$(PREPROCESSOR_DEFS);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>-Wno-inconsistent-missing-override</AdditionalOptions>
+      <FloatABI>soft</FloatABI>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <DataLevelLinking>true</DataLevelLinking>
+      <OmitFramePointers>true</OmitFramePointers>
+      <Verbose>false</Verbose>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <AdditionalOptions>-std=c++20 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <LibraryDependencies>%(LibraryDependencies);GLESv1_CM;EGL;</LibraryDependencies>
+      <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL;unwind;atomic</LibraryDependencies>
+      <AdditionalOptions>-lm -lz -latomic</AdditionalOptions>
+      <AdditionalDependencies>C:\android\lib\libvorbisfile.a;C:\android\lib\libvorbis.a;C:\android\lib\libssl.a;C:\android\lib\libpng.a;C:\android\lib\libphysfs.a;C:\android\lib\libopenal.a;C:\android\lib\libogg.a;C:\android\lib\libluajit.a;C:\android\lib\libcrypto.a;C:\android\lib\libzip.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <SharedLibrarySearchPath>C:\android\lib;%(SharedLibrarySearchPath)</SharedLibrarySearchPath>
+      <AdditionalLibraryDirectories>C:\android\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>$(SolutionDir)..\src\android\pch.h</PrecompiledHeaderFile>
       <CompileAs>CompileAsCpp</CompileAs>
+      <ExceptionHandling>Enabled</ExceptionHandling>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <CLanguageStandard>c11</CLanguageStandard>
+      <CppLanguageStandard>c++1z</CppLanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\src;C:\android\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ANDROID;OPENGL_ES;OTCLIENT;FW_NET;FW_XML;FW_PROXY;NOMINMAX;NDEBUG;$(PREPROCESSOR_DEFS);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>-Wno-inconsistent-missing-override</AdditionalOptions>
+      <FloatABI>soft</FloatABI>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <DataLevelLinking>true</DataLevelLinking>
+      <OmitFramePointers>true</OmitFramePointers>
+      <Verbose>false</Verbose>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <AdditionalOptions>-std=c++20 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <LibraryDependencies>%(LibraryDependencies);GLESv1_CM;EGL;</LibraryDependencies>
+      <LibraryDependencies>%(LibraryDependencies);GLESv2;EGL;unwind;atomic</LibraryDependencies>
+      <AdditionalOptions>-lm -lz -latomic</AdditionalOptions>
+      <AdditionalDependencies>C:\android\lib\libvorbisfile.a;C:\android\lib\libvorbis.a;C:\android\lib\libssl.a;C:\android\lib\libpng.a;C:\android\lib\libphysfs.a;C:\android\lib\libopenal.a;C:\android\lib\libogg.a;C:\android\lib\libluajit.a;C:\android\lib\libcrypto.a;C:\android\lib\libzip.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <SharedLibrarySearchPath>C:\android\lib;%(SharedLibrarySearchPath)</SharedLibrarySearchPath>
+      <AdditionalLibraryDirectories>C:\android\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

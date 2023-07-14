@@ -1,0 +1,79 @@
+name: Builld - Android
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches:
+      - main
+
+env:
+  CMAKE_BUILD_PARALLEL_LEVEL: 2
+  MAKEFLAGS: '-j 2'
+
+jobs:
+  Android:
+    name: android-25
+    runs-on: windows-2022
+    timeout-minutes: 60
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+          submodules: recursive
+
+    - name: Setup MSBuild and add to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+      id: setup_msbuild
+
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v2
+      with:
+        java-version: '8.0.362'
+        distribution: 'temurin'
+
+    - name: Download NDK
+      run: |
+        $url = "https://dl.google.com/android/repository/android-ndk-r25c-windows.zip?hl=pt-br"
+        $outputFile = "ndk.zip"
+        Invoke-WebRequest -Uri $url -OutFile $outputFile
+
+    - name: Extract NDK
+      run: |
+        7z x ndk.zip -aoa -oC:\Android\android-sdk
+
+    - name: Download create_android_assets script
+      run: |
+        $url = "https://github.com/opentibiabr/otcv8/releases/download/binary-files/create_android_assets.ps1"
+        $outputFile = "create_android_assets.ps1"
+        Invoke-WebRequest -Uri $url -OutFile $outputFile
+
+    - name: Create data.zip for android
+      run: |
+        powershell -ExecutionPolicy Bypass -File .\create_android_assets.ps1
+
+    - name: Download android libs
+      run: |
+        $url = "https://github.com/opentibiabr/otcv8/releases/download/binary-files/android-libs.7z"
+        $outputFile = "android_libs.7z"
+        Invoke-WebRequest -Uri $url -OutFile $outputFile
+
+    - name: Decompress android libs
+      run: |
+        7z x android_libs.7z -aoa -oC:\android
+
+    - name: Build for android
+      timeout-minutes: 25
+      run: |
+        cd android
+        $env:VS_NdkRoot="C:\Android\android-sdk\android-ndk-r25c"
+        MSBuild.exe /p:Configuration=Release /p:Platform="ARM64" /p:BUILD_REVISION=${{github.run_number}}
+
+    - name: Upload binaries
+      uses: 'actions/upload-artifact@v2'
+      with:
+        name: Binaries
+        path: |
+          otclientv8.apk
+        if-no-files-found: error
