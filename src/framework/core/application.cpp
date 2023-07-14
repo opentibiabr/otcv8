@@ -191,7 +191,7 @@ void Application::restart()
     g_logger.fatal("Updater restart error. Please restart application");
     std::quick_exit(0);
 #else
-    exit(0);
+    exit();
 #endif
 }
 
@@ -211,7 +211,7 @@ void Application::restartArgs(const std::vector<std::string>& args)
     g_logger.fatal("Updater restart error. Please restart application");
     std::quick_exit(0);
 #else
-    exit(0);
+    exit();
 #endif
 }
 
