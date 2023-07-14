@@ -32,9 +32,6 @@
 #include <queue>
 #include <regex>
 
-#if not(defined(ANDROID) || defined(FREE_VERSION))
-#include <boost/process.hpp>
-#endif
 #include <locale>
 #include <zlib.h>
 
@@ -57,7 +54,7 @@ void ResourceManager::init(const char *argv0)
 #elif defined(ANDROID)
     // nothing
 #else
-    m_binaryPath = std::filesystem::absolute(argv0);    
+    m_binaryPath = std::filesystem::absolute(argv0);
 #endif
     PHYSFS_init(argv0);
     PHYSFS_permitSymbolicLinks(1);
@@ -68,8 +65,16 @@ void ResourceManager::terminate()
     PHYSFS_deinit();
 }
 
-bool ResourceManager::launchCorrect(const std::string& product, const std::string& app) { // curently works only on windows
-#if not(defined(ANDROID) || defined(FREE_VERSION))
+bool launchProcess(const std::string& command)
+{
+    int exitCode = std::system(command.c_str());
+    return exitCode == 0;
+}
+
+bool ResourceManager::launchCorrect(const std::vector<std::string>& args, const std::string& product, const std::string& app) { // curently works only on windows
+#if defined(ANDROID) || defined(FREE_VERSION)
+    return false;
+#else
     auto init_path = m_binaryPath.parent_path();
     init_path /= INIT_FILENAME;
     if (std::filesystem::exists(init_path)) // debug version
@@ -128,16 +133,8 @@ bool ResourceManager::launchCorrect(const std::string& product, const std::strin
     if (binary == m_binaryPath)
         return false;
 
-    boost::process::child c(binary.string());
-    std::error_code ec2;
-    if (c.wait_for(std::chrono::seconds(5), ec2)) {
-        return c.exit_code() == 0;
-    }
-
-    c.detach();
+    g_platform.spawnProcess(binary.string(), args);
     return true;
-#else
-    return false;
 #endif
 }
 
@@ -378,7 +375,7 @@ void ResourceManager::readFileStream(const std::string& fileName, std::iostream&
 std::string ResourceManager::readFileContents(const std::string& fileName, bool safe)
 {
     std::string fullPath = resolvePath(fileName);
-    
+
     if (fullPath.find("/downloads") != std::string::npos) {
         auto dfile = g_http.getFile(fullPath.substr(10));
         if (dfile)
@@ -446,7 +443,7 @@ bool ResourceManager::isFileEncryptedOrCompressed(const std::string& fileName)
 
     if (fileContent.size() < 10)
         return false;
-    
+
     if (fileContent.substr(0, 4).compare("ENC3") == 0)
         return true;
 
@@ -735,8 +732,8 @@ void ResourceManager::updateData(const std::set<std::string>& files, bool reMoun
     zip_stat_t zst;
     if (zip_source_stat(src, &zst) < 0)
         return g_logger.fatal(stdext::format("can't stat source: %s", zip_error_strerror(zip_source_error(src))));
-    
-    size_t zipSize = zst.size;    
+
+    size_t zipSize = zst.size;
 
     if (zip_source_open(src) < 0)
         return g_logger.fatal(stdext::format("can't open source: %s", zip_error_strerror(zip_source_error(src))));
@@ -1025,7 +1022,7 @@ void ResourceManager::encrypt(const std::string& seed) {
         g_logger.info(stdext::format("%s - encrypted", it.string()));
     }
 }
-#endif 
+#endif
 
 bool ResourceManager::decryptBuffer(std::string& buffer) {
 #ifdef FREE_VERSION

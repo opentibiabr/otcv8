@@ -138,7 +138,7 @@ public:
 protected:
     void onConnect();
     void onRecv(const InputMessagePtr& inputMessage);
-    void onError(const boost::system::error_code& error);
+    void onError(const std::error_code& error);
 
     friend class Game;
 

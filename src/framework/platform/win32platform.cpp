@@ -23,16 +23,17 @@
 #ifdef WIN32
 
 #include "platform.h"
-#include <winsock2.h>
-#include <windows.h>
 #include <framework/global.h>
 #include <framework/stdext/stdext.h>
 #include <framework/core/eventdispatcher.h>
-#include <boost/algorithm/string.hpp>
+
 #include <tchar.h>
 #include <Psapi.h>
 #include <iphlpapi.h>
 #include <tlhelp32.h>
+#include <codecvt>
+#include <winsock2.h>
+#include <windows.h>
 
 void Platform::processArgs(std::vector<std::string>& args)
 {
@@ -51,15 +52,16 @@ void Platform::processArgs(std::vector<std::string>& args)
 bool Platform::spawnProcess(std::string process, const std::vector<std::string>& args)
 {
     std::string commandLine;
-    for (uint i = 0; i < args.size(); ++i)
-        commandLine += stdext::format(" \"%s\"", args[i]);
+    for (const std::string& arg : args)
+        commandLine += " \"" + arg + "\"";
 
-    boost::replace_all(process, "/", "\\");
-    if (!boost::ends_with(process, ".exe"))
+    std::replace(process.begin(), process.end(), '/', '\\');
+    if (!process.ends_with(".exe"))
         process += ".exe";
 
-    std::wstring wfile = stdext::utf8_to_utf16(process);
-    std::wstring wcommandLine = stdext::utf8_to_utf16(commandLine);
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t> converter;
+    std::wstring wfile = converter.from_bytes(process);
+    std::wstring wcommandLine = converter.from_bytes(commandLine);
 
     if ((size_t)ShellExecuteW(NULL, L"open", wfile.c_str(), wcommandLine.c_str(), NULL, SW_SHOWNORMAL) > 32)
         return true;
@@ -98,7 +100,7 @@ std::string Platform::getTempPath()
     wchar_t path[MAX_PATH];
     GetTempPathW(MAX_PATH, path);
     ret = stdext::utf16_to_utf8(path);
-    boost::replace_all(ret, "\\", "/");
+    stdext::replace_all(ret, "\\", "/");
     return ret;
 }
 
@@ -108,14 +110,14 @@ std::string Platform::getCurrentDir()
     wchar_t path[MAX_PATH];
     GetCurrentDirectoryW(MAX_PATH, path);
     ret = stdext::utf16_to_utf8(path);
-    boost::replace_all(ret, "\\", "/");
+    stdext::replace_all(ret, "\\", "/");
     ret += "/";
     return ret;
 }
 
 bool Platform::fileExists(std::string file)
 {
-    boost::replace_all(file, "/", "\\");
+    stdext::replace_all(file, "/", "\\");
     std::wstring wfile = stdext::utf8_to_utf16(file);
     DWORD dwAttrib = GetFileAttributesW(wfile.c_str());
     return (dwAttrib != INVALID_FILE_ATTRIBUTES && !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
@@ -123,8 +125,8 @@ bool Platform::fileExists(std::string file)
 
 bool Platform::copyFile(std::string from, std::string to)
 {
-    boost::replace_all(from, "/", "\\");
-    boost::replace_all(to, "/", "\\");
+    stdext::replace_all(from, "/", "\\");
+    stdext::replace_all(to, "/", "\\");
     if (CopyFileW(stdext::utf8_to_utf16(from).c_str(), stdext::utf8_to_utf16(to).c_str(), FALSE) == 0)
         return false;
     return true;
@@ -132,7 +134,7 @@ bool Platform::copyFile(std::string from, std::string to)
 
 bool Platform::removeFile(std::string file)
 {
-    boost::replace_all(file, "/", "\\");
+    stdext::replace_all(file, "/", "\\");
     if (DeleteFileW(stdext::utf8_to_utf16(file).c_str()) == 0)
         return false;
     return true;
@@ -140,7 +142,7 @@ bool Platform::removeFile(std::string file)
 
 ticks_t Platform::getFileModificationTime(std::string file)
 {
-    boost::replace_all(file, "/", "\\");
+    stdext::replace_all(file, "/", "\\");
     std::wstring wfile = stdext::utf8_to_utf16(file);
     WIN32_FILE_ATTRIBUTE_DATA fileAttrData;
     memset(&fileAttrData, 0, sizeof(fileAttrData));
@@ -504,7 +506,7 @@ std::vector<std::string> Platform::getDlls()
 
     std::vector<std::string> ret;
     HANDLE hProcess = GetCurrentProcess();
-    if (!hProcess) 
+    if (!hProcess)
         return ret;
 
     if (EnumProcessModules(hProcess, hMods, sizeof(hMods), &cbNeeded)) {

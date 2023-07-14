@@ -34,7 +34,7 @@ public:
     // @dontbind
     void terminate();
 
-    bool launchCorrect(const std::string& product, const std::string& app);
+    bool launchCorrect(const std::vector<std::string>& args, const std::string& product, const std::string& app);
     bool setupWriteDir(const std::string& product, const std::string& app);
     bool setup();
 
@@ -80,7 +80,7 @@ public:
     bool isLoadedFromMemory() { return m_loadedFromMemory; }
 
     std::string fileChecksum(const std::string& path);
-    
+
     std::map<std::string, std::string> filesChecksums();
     std::string selfChecksum();
 

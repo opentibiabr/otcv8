@@ -16,7 +16,7 @@ void Proxy::start()
     std::clog << "[Proxy " << m_host << "] start" << std::endl;
 #endif
     auto self(shared_from_this());
-    boost::asio::post(m_io, [&, self] {
+    asio::post(m_io, [&, self] {
         g_proxies.insert(self);
         check();
     });
@@ -33,10 +33,10 @@ void Proxy::terminate()
 #endif
 
     auto self(shared_from_this());
-    boost::asio::post(m_io, [&, self] {
+    asio::post(m_io, [&, self] {
         g_proxies.erase(self);
         disconnect();
-        boost::system::error_code ec;
+        std::error_code ec;
         m_timer.cancel(ec);
     });
 }
@@ -50,7 +50,7 @@ std::string Proxy::getDebugInfo()
 }
 
 
-void Proxy::check(const boost::system::error_code& ec)
+void Proxy::check(const std::error_code& ec)
 {
     if (ec || m_terminated) {
         return;
@@ -89,38 +89,38 @@ void Proxy::connect()
     m_state = STATE_CONNECTING;
     m_connections += 1;
     m_sessions = 0;
-    m_resolver = boost::asio::ip::tcp::resolver(m_io);
+    m_resolver = asio::ip::tcp::resolver(m_io);
     auto self(shared_from_this());
-    m_resolver.async_resolve(m_host, "http", [self](const boost::system::error_code& ec,
-                                                    boost::asio::ip::tcp::resolver::results_type results) {
-        auto endpoint = boost::asio::ip::tcp::endpoint();
+    m_resolver.async_resolve(m_host, "http", [self](const std::error_code& ec,
+                                                    asio::ip::tcp::resolver::results_type results) {
+        auto endpoint = asio::ip::tcp::endpoint();
         if (ec || results.empty()) {
 #ifdef PROXY_DEBUG
             std::clog << "[Proxy " << self->m_host << "] resolve error: " << ec.message() << std::endl;
 #endif
-            boost::system::error_code ecc;
-            auto address = boost::asio::ip::make_address_v4(self->m_host, ecc);
+            std::error_code ecc;
+            auto address = asio::ip::make_address_v4(self->m_host, ecc);
             if (ecc) {
                 self->m_state = STATE_NOT_CONNECTED;
                 return;
             }
-            endpoint = boost::asio::ip::tcp::endpoint(address, self->m_port);
+            endpoint = asio::ip::tcp::endpoint(address, self->m_port);
         } else {
-            endpoint = boost::asio::ip::tcp::endpoint(*results);
+            endpoint = asio::ip::tcp::endpoint(*results);
             endpoint.port(self->m_port);
         }
         self->m_resolvedIp = endpoint.address().to_string();
-        self->m_socket = boost::asio::ip::tcp::socket(self->m_io);
+        self->m_socket = asio::ip::tcp::socket(self->m_io);
         self->m_lastPingSent = std::chrono::high_resolution_clock::now(); // used for async_connect timeout
-        self->m_socket.async_connect(endpoint, [self, endpoint](const boost::system::error_code& ec) {
+        self->m_socket.async_connect(endpoint, [self, endpoint](const std::error_code& ec) {
             if (ec) {
                 self->m_state = STATE_NOT_CONNECTED;
                 return;
             }
-            boost::system::error_code ecc;
-            self->m_socket.set_option(boost::asio::ip::tcp::no_delay(true), ecc);
-            self->m_socket.set_option(boost::asio::socket_base::send_buffer_size(65536), ecc);
-            self->m_socket.set_option(boost::asio::socket_base::receive_buffer_size(65536), ecc);
+            std::error_code ecc;
+            self->m_socket.set_option(asio::ip::tcp::no_delay(true), ecc);
+            self->m_socket.set_option(asio::socket_base::send_buffer_size(65536), ecc);
+            self->m_socket.set_option(asio::socket_base::receive_buffer_size(65536), ecc);
             if (ecc) {
 #ifdef PROXY_DEBUG
                 std::clog << "[Proxy " << self->m_host << "] connect error: " << ecc.message() << std::endl;
@@ -139,7 +139,7 @@ void Proxy::connect()
 
 void Proxy::disconnect()
 {
-    boost::system::error_code ec;
+    std::error_code ec;
     m_socket.close(ec);
     m_state = STATE_NOT_CONNECTED;
     m_ping = CHECK_INTERVAL * 2;
@@ -188,10 +188,10 @@ void Proxy::removeSession(uint32_t id)
 
 void Proxy::readHeader()
 {
-    boost::asio::async_read(m_socket, boost::asio::buffer(m_buffer, 2), std::bind(&Proxy::onHeader, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+    asio::async_read(m_socket, asio::buffer(m_buffer, 2), std::bind(&Proxy::onHeader, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 }
 
-void Proxy::onHeader(const boost::system::error_code& ec, std::size_t bytes_transferred)
+void Proxy::onHeader(const std::error_code& ec, std::size_t bytes_transferred)
 {
     if (ec || bytes_transferred != 2) {
 #ifdef PROXY_DEBUG
@@ -211,10 +211,10 @@ void Proxy::onHeader(const boost::system::error_code& ec, std::size_t bytes_tran
         return disconnect();
     }
 
-    boost::asio::async_read(m_socket, boost::asio::buffer(m_buffer, packetSize), std::bind(&Proxy::onPacket, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+    asio::async_read(m_socket, asio::buffer(m_buffer, packetSize), std::bind(&Proxy::onPacket, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 }
 
-void Proxy::onPacket(const boost::system::error_code& ec, std::size_t bytes_transferred)
+void Proxy::onPacket(const std::error_code& ec, std::size_t bytes_transferred)
 {
     if (ec || bytes_transferred < 12) {
 #ifdef PROXY_DEBUG
@@ -268,11 +268,11 @@ void Proxy::send(const ProxyPacketPtr& packet)
     bool sendNow = m_sendQueue.empty();
     m_sendQueue.push_back(packet);
     if (sendNow) {
-        boost::asio::async_write(m_socket, boost::asio::buffer(packet->data(), packet->size()), std::bind(&Proxy::onSent, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+        asio::async_write(m_socket, asio::buffer(packet->data(), packet->size()), std::bind(&Proxy::onSent, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
     }
 }
 
-void Proxy::onSent(const boost::system::error_code& ec, std::size_t bytes_transferred)
+void Proxy::onSent(const std::error_code& ec, std::size_t bytes_transferred)
 {
     if (ec) {
 #ifdef PROXY_DEBUG
@@ -284,7 +284,7 @@ void Proxy::onSent(const boost::system::error_code& ec, std::size_t bytes_transf
     m_bytesSent += bytes_transferred;
     m_sendQueue.pop_front();
     if (!m_sendQueue.empty()) {
-        boost::asio::async_write(m_socket, boost::asio::buffer(m_sendQueue.front()->data(), m_sendQueue.front()->size()),
+        asio::async_write(m_socket, asio::buffer(m_sendQueue.front()->data(), m_sendQueue.front()->size()),
                                  std::bind(&Proxy::onSent, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
     }
 }
@@ -296,17 +296,17 @@ void Session::start(int maxConnections)
 #endif
     m_maxConnections = maxConnections;
     auto self(shared_from_this());
-    boost::asio::post(m_io, [&, self] {
+    asio::post(m_io, [&, self] {
         g_sessions[self->m_id] = self;
         m_lastPacket = std::chrono::high_resolution_clock::now();
-        check(boost::system::error_code());
+        check(std::error_code());
         if (m_useSocket) {
             readHeader();
         }
     });
 }
 
-void Session::terminate(boost::system::error_code ec)
+void Session::terminate(std::error_code ec)
 {
     if (m_terminated)
         return;
@@ -317,11 +317,11 @@ void Session::terminate(boost::system::error_code ec)
 #endif
 
     auto self(shared_from_this());
-    boost::asio::post(m_io, [&, self, ec] {
+    asio::post(m_io, [&, self, ec] {
         g_sessions.erase(m_id);
         if (m_useSocket) {
-            boost::system::error_code ecc;
-            m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ecc);
+            std::error_code ecc;
+            m_socket.shutdown(asio::ip::tcp::socket::shutdown_both, ecc);
             m_socket.close(ecc);
             m_timer.cancel(ecc);
         } else if (m_disconnectCallback) {
@@ -335,7 +335,7 @@ void Session::terminate(boost::system::error_code ec)
     });
 }
 
-void Session::check(const boost::system::error_code& ec)
+void Session::check(const std::error_code& ec)
 {
     if (ec || m_terminated) {
         return;
@@ -343,7 +343,7 @@ void Session::check(const boost::system::error_code& ec)
 
     uint32_t lastPacket = (uint32_t)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_lastPacket).count();
     if (lastPacket > TIMEOUT) {
-        return terminate(boost::asio::error::timed_out);
+        return terminate(asio::error::timed_out);
     }
 
     selectProxies();
@@ -431,15 +431,15 @@ void Session::onProxyPacket(uint32_t packetId, uint32_t lastRecivedPacketId, con
         return;
     }
 
-    boost::asio::async_write(m_socket, boost::asio::buffer(packet->data(), packet->size()),
+    asio::async_write(m_socket, asio::buffer(packet->data(), packet->size()),
                              std::bind(&Session::onSent, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 }
 
 void Session::readTibia12Header()
 {
     auto self(shared_from_this());
-    boost::asio::async_read(m_socket, boost::asio::buffer(m_buffer, 1),
-                            [self](const boost::system::error_code& ec, std::size_t bytes_transferred) {
+    asio::async_read(m_socket, asio::buffer(m_buffer, 1),
+                            [self](const std::error_code& ec, std::size_t bytes_transferred) {
         if (ec) {
             return self->terminate();
         }
@@ -456,11 +456,11 @@ void Session::readTibia12Header()
 
 void Session::readHeader()
 {
-    boost::asio::async_read(m_socket, boost::asio::buffer(m_buffer, 2),
+    asio::async_read(m_socket, asio::buffer(m_buffer, 2),
                             std::bind(&Session::onHeader, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 }
 
-void Session::onHeader(const boost::system::error_code& ec, std::size_t bytes_transferred)
+void Session::onHeader(const std::error_code& ec, std::size_t bytes_transferred)
 {
     if (ec) {
 #ifdef PROXY_DEBUG
@@ -481,11 +481,11 @@ void Session::onHeader(const boost::system::error_code& ec, std::size_t bytes_tr
         return terminate();
     }
 
-    boost::asio::async_read(m_socket, boost::asio::buffer(m_buffer + 2, packetSize),
+    asio::async_read(m_socket, asio::buffer(m_buffer + 2, packetSize),
                             std::bind(&Session::onBody, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
 }
 
-void Session::onBody(const boost::system::error_code& ec, std::size_t bytes_transferred)
+void Session::onBody(const std::error_code& ec, std::size_t bytes_transferred)
 {
     if (ec) {
 #ifdef PROXY_DEBUG
@@ -510,7 +510,7 @@ void Session::onPacket(const ProxyPacketPtr& packet)
     }
 
     auto self(shared_from_this());
-    boost::asio::post(m_io, [&, self, packet] {
+    asio::post(m_io, [&, self, packet] {
         uint32_t packetId = m_outputPacketId++;
         auto newPacket = std::make_shared<ProxyPacket>(packet->size() + 14);
 
@@ -527,7 +527,7 @@ void Session::onPacket(const ProxyPacketPtr& packet)
     });
 }
 
-void Session::onSent(const boost::system::error_code& ec, std::size_t bytes_transferred)
+void Session::onSent(const std::error_code& ec, std::size_t bytes_transferred)
 {
     if (ec) {
 #ifdef PROXY_DEBUG
@@ -539,7 +539,7 @@ void Session::onSent(const boost::system::error_code& ec, std::size_t bytes_tran
     m_inputPacketId += 1;
     m_sendQueue.erase(m_sendQueue.begin());
     if (!m_sendQueue.empty() && m_sendQueue.begin()->first == m_inputPacketId) {
-        boost::asio::async_write(m_socket, boost::asio::buffer(m_sendQueue.begin()->second->data(), m_sendQueue.begin()->second->size()),
+        asio::async_write(m_socket, asio::buffer(m_sendQueue.begin()->second->data(), m_sendQueue.begin()->second->size()),
                                  std::bind(&Session::onSent, shared_from_this(), std::placeholders::_1, std::placeholders::_2));
     }
 }

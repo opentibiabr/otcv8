@@ -52,7 +52,7 @@ void Animator::unserialize(int animationPhases, const FileStreamPtr& fin)
     for(int i = 0; i < m_animationPhases; ++i) {
         int minimum = fin->getU32();
         int maximum = fin->getU32();
-        m_phaseDurations.push_back(std::make_pair(minimum, std::max(0, maximum - minimum)));
+        m_phaseDurations.push_back(std::make_pair(minimum, std::max<int>(0, maximum - minimum)));
     }
 
     m_phase = getStartPhase();
@@ -130,7 +130,7 @@ int Animator::getPhaseAt(Timer& timer, int lastPhase)
     static int rand_val = 6;
     ticks_t time = timer.ticksElapsed();
     for (int i = lastPhase; i < m_animationPhases; ++i) {
-        int phaseDuration = m_phaseDurations[i].second == 0 ? 
+        int phaseDuration = m_phaseDurations[i].second == 0 ?
             m_phaseDurations[i].first : m_phaseDurations[i].first + rand_val % (m_phaseDurations[i].second);
         rand_val = rand_val * 7 + 11;
         if (time < phaseDuration) {

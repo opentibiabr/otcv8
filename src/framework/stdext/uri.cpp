@@ -1,4 +1,3 @@
-#include <boost/algorithm/string.hpp>
 #include <regex>
 
 #include "uri.h"
@@ -14,7 +13,7 @@ ParsedURI parseURI(const std::string& url)
                                        std::regex_constants::ECMAScript | std::regex_constants::icase };
     std::smatch match;
     if (std::regex_match(url, match, PARSE_URL) && match.size() == 8) {
-        result.protocol = value_or(boost::algorithm::to_lower_copy(std::string(match[2])), "http");
+        result.protocol = value_or(std::regex_replace(std::string(match[2]), std::regex("(.*)"), "$1"), "http");
         result.domain = match[3];
         const bool is_sequre_protocol = (result.protocol == "https" || result.protocol == "wss");
         result.port = value_or(match[5], (is_sequre_protocol) ? "443" : "80");

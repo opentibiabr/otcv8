@@ -4,7 +4,7 @@
 
 class ProxyManager {
 public:
-    ProxyManager() : m_io(), m_guard(boost::asio::make_work_guard(m_io))
+    ProxyManager() : m_io(), m_guard(asio::make_work_guard(m_io))
     {
 
     }
@@ -20,7 +20,7 @@ public:
     bool isActive();
     void addProxy(const std::string& host, uint16_t port, int priority);
     void removeProxy(const std::string& host, uint16_t port);
-    uint32_t addSession(uint16_t port, std::function<void(ProxyPacketPtr)> recvCallback, std::function<void(boost::system::error_code)> disconnectCallback);
+    uint32_t addSession(uint16_t port, std::function<void(ProxyPacketPtr)> recvCallback, std::function<void(std::error_code)> disconnectCallback);
     void removeSession(uint32_t sessionId);
     void send(uint32_t sessionId, ProxyPacketPtr packet);
     // tools
@@ -29,8 +29,8 @@ public:
     int getPing();
 
 private:
-    boost::asio::io_context m_io;
-    boost::asio::executor_work_guard<boost::asio::io_context::executor_type> m_guard;
+    asio::io_context m_io;
+    asio::executor_work_guard<asio::io_context::executor_type> m_guard;
 
     bool m_working = false;
     std::thread m_thread;

@@ -72,11 +72,11 @@ public:
 protected:
     virtual void onConnect();
     virtual void onRecv(const InputMessagePtr& inputMessage);
-    virtual void onError(const boost::system::error_code& err);
+    virtual void onError(const std::error_code& err);
 
     void onProxyPacket(const std::shared_ptr<std::vector<uint8_t>>& packet);
     void onPlayerPacket(const std::shared_ptr<std::vector<uint8_t>>& packet);
-    void onLocalDisconnected(boost::system::error_code ec);
+    void onLocalDisconnected(std::error_code ec);
     bool m_disconnected = false;
     uint32_t m_proxy = 0;
 

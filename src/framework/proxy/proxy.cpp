@@ -80,7 +80,7 @@ void ProxyManager::removeProxy(const std::string& host, uint16_t port)
     }
 }
 
-uint32_t ProxyManager::addSession(uint16_t port, std::function<void(ProxyPacketPtr)> recvCallback, std::function<void(boost::system::error_code)> disconnectCallback)
+uint32_t ProxyManager::addSession(uint16_t port, std::function<void(ProxyPacketPtr)> recvCallback, std::function<void(std::error_code)> disconnectCallback)
 {
     VALIDATE(recvCallback && disconnectCallback);
     auto session = std::make_shared<Session>(m_io, port, recvCallback, disconnectCallback);

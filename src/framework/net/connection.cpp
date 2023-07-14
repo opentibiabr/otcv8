@@ -24,10 +24,12 @@
 
 #include <framework/core/application.h>
 #include <framework/core/eventdispatcher.h>
-#include <boost/asio.hpp>
 #include <framework/util/stats.h>
 #include <framework/util/extras.h>
+
+// Mover include para pch.hpp
 #include <chrono>
+#include <asio.hpp>
 
 asio::io_service g_ioService;
 std::list<std::shared_ptr<asio::streambuf>> Connection::m_outputStreams;
@@ -84,8 +86,8 @@ void Connection::close()
     m_delayedWriteTimer.cancel();
 
     if(m_socket.is_open()) {
-        boost::system::error_code ec;
-        m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+        std::error_code ec;
+        m_socket.shutdown(asio::ip::tcp::socket::shutdown_both, ec);
         m_socket.close();
     }
 }
@@ -202,7 +204,7 @@ void Connection::read_some(const RecvCallback& callback)
     m_readTimer.async_wait(std::bind(&Connection::onTimeout, asConnection(), std::placeholders::_1));
 }
 
-void Connection::onResolve(const boost::system::error_code& error, asio::ip::basic_resolver<asio::ip::tcp>::iterator endpointIterator)
+void Connection::onResolve(const std::error_code& error, asio::ip::basic_resolver<asio::ip::tcp>::iterator endpointIterator)
 {
     m_readTimer.cancel();
 
@@ -215,7 +217,7 @@ void Connection::onResolve(const boost::system::error_code& error, asio::ip::bas
         handleError(error);
 }
 
-void Connection::onConnect(const boost::system::error_code& error)
+void Connection::onConnect(const std::error_code& error)
 {
     m_readTimer.cancel();
     m_activityTimer.restart();
@@ -227,11 +229,11 @@ void Connection::onConnect(const boost::system::error_code& error)
         m_connected = true;
 
         // disable nagle's algorithm, this make the game play smoother
-        boost::asio::ip::tcp::no_delay option(true);
+        asio::ip::tcp::no_delay option(true);
         m_socket.set_option(option);
-        boost::system::error_code ecc;
-        m_socket.set_option(boost::asio::socket_base::send_buffer_size(524288), ecc);
-        m_socket.set_option(boost::asio::socket_base::receive_buffer_size(524288), ecc);
+        std::error_code ecc;
+        m_socket.set_option(asio::socket_base::send_buffer_size(524288), ecc);
+        m_socket.set_option(asio::socket_base::receive_buffer_size(524288), ecc);
 
         if(m_connectCallback)
             m_connectCallback();
@@ -241,7 +243,7 @@ void Connection::onConnect(const boost::system::error_code& error)
     m_connecting = false;
 }
 
-void Connection::onCanWrite(const boost::system::error_code& error)
+void Connection::onCanWrite(const std::error_code& error)
 {
     m_delayedWriteTimer.cancel();
 
@@ -252,7 +254,7 @@ void Connection::onCanWrite(const boost::system::error_code& error)
         internal_write();
 }
 
-void Connection::onWrite(const boost::system::error_code& error, size_t writeSize, std::shared_ptr<asio::streambuf> outputStream)
+void Connection::onWrite(const std::error_code& error, size_t writeSize, std::shared_ptr<asio::streambuf> outputStream)
 {
     m_writeTimer.cancel();
 
@@ -267,7 +269,7 @@ void Connection::onWrite(const boost::system::error_code& error, size_t writeSiz
         handleError(error);
 }
 
-void Connection::onRecv(const boost::system::error_code& error, size_t recvSize)
+void Connection::onRecv(const std::error_code& error, size_t recvSize)
 {
     m_readTimer.cancel();
     m_activityTimer.restart();
@@ -278,7 +280,7 @@ void Connection::onRecv(const boost::system::error_code& error, size_t recvSize)
     if(m_connected) {
         if(!error) {
             if(m_recvCallback) {
-                const char* header = boost::asio::buffer_cast<const char*>(m_inputStream.data());
+                const char* header = asio::buffer_cast<const char*>(m_inputStream.data());
                 m_recvCallback((uint8*)header, recvSize);
             }
         } else
@@ -289,7 +291,7 @@ void Connection::onRecv(const boost::system::error_code& error, size_t recvSize)
         m_inputStream.consume(recvSize);
 }
 
-void Connection::onTimeout(const boost::system::error_code& error)
+void Connection::onTimeout(const std::error_code& error)
 {
     if(error == asio::error::operation_aborted)
         return;
@@ -297,7 +299,7 @@ void Connection::onTimeout(const boost::system::error_code& error)
     handleError(asio::error::timed_out);
 }
 
-void Connection::handleError(const boost::system::error_code& error)
+void Connection::handleError(const std::error_code& error)
 {
     if(error == asio::error::operation_aborted)
         return;
@@ -311,10 +313,10 @@ void Connection::handleError(const boost::system::error_code& error)
 
 int Connection::getIp()
 {
-    boost::system::error_code error;
-    const boost::asio::ip::tcp::endpoint ip = m_socket.remote_endpoint(error);
+    std::error_code error;
+    const asio::ip::tcp::endpoint ip = m_socket.remote_endpoint(error);
     if(!error)
-        return boost::asio::detail::socket_ops::host_to_network_long(ip.address().to_v4().to_ulong());
+        return asio::detail::socket_ops::host_to_network_long(ip.address().to_v4().to_ulong());
 
     g_logger.error("Getting remote ip");
     return 0;

@@ -16,7 +16,7 @@ function init()
 
   okButton.onClick = send
   cancelButton.onClick = hide
-  feedbackWindow.onEscape = hide    
+  feedbackWindow.onEscape = hide
 end
 
 function terminate()
@@ -32,13 +32,13 @@ function show()
   feedbackWindow:show()
   feedbackWindow:raise()
   feedbackWindow:focus()
-  
+
   textEdit:setMaxLength(8192)
   textEdit:setText('')
   textEdit:setEditable(true)
   textEdit:setCursorVisible(true)
   feedbackWindow:focusChild(textEdit, KeyboardFocusReason)
-  
+
   tries = 0
 end
 
@@ -79,7 +79,6 @@ function send()
       otserv_protocol = g_game.getProtocolVersion(),
       otserv_client = g_game.getClientVersion(),
       build_version = g_app.getVersion(),
-      build_revision = g_app.getBuildRevision(),
       build_commit = g_app.getBuildCommit(),
       build_date = g_app.getBuildDate(),
       display_width = g_window.getDisplayWidth(),
@@ -87,7 +86,7 @@ function send()
       cpu = g_platform.getCPUName(),
       mem = g_platform.getTotalSystemMemory(),
       os_name = g_platform.getOSName()
-    } 
+    }
     local data = json.encode({
       text = text,
       version = g_app.getVersion(),
@@ -95,15 +94,15 @@ function send()
       player = playerData,
       details = details
     })
-    
-    postId = HTTP.post(Services.feedback, data, function(ret, err) 
+
+    postId = HTTP.post(Services.feedback, data, function(ret, err)
       if err then
         tries = tries + 1
-        if tries < 3 then 
+        if tries < 3 then
           replyEvent = scheduleEvent(send, 1000)
         end
       end
     end)
-  end 
+  end
   hide()
 end

@@ -37,7 +37,7 @@
 #include <bitset>
 
 struct UnjustifiedPoints {
-    bool operator==(const UnjustifiedPoints& other) {
+    bool operator==(const UnjustifiedPoints& other) const {
         return killsDay == other.killsDay &&
             killsDayRemaining == other.killsDayRemaining &&
             killsWeek == other.killsWeek &&
@@ -70,7 +70,7 @@ private:
     void resetGameStates();
 
 protected:
-    void processConnectionError(const boost::system::error_code& error);
+    void processConnectionError(const std::error_code& error);
     void processDisconnect();
     void processPing();
     void processPingBack();
