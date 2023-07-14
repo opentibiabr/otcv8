@@ -37,11 +37,7 @@
 #define GL_APICALL
 #define EGLAPI
 
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-#include <EGL/eglext_angle.h>
+#include <GLES3/gl3.h>
 #else
 #ifndef _MSC_VER
 #define GLEW_STATIC

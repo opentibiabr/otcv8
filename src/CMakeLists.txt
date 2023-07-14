@@ -169,29 +169,27 @@ add_definitions(-D"BUILD_REVISION=\\\"${BUILD_REVISION}\\\"")
 # Packages / Libs
 # *****************************************************************************
 
-if(NOT WASM)
-    #find zip
-    find_package(LibZip REQUIRED)
-    find_package(ZLIB REQUIRED)
+find_package(LibZip REQUIRED)
+find_package(ZLIB REQUIRED)
 
-    #find lua
-    find_package(LuaJIT REQUIRED)
-    message(STATUS "LuaJIT: " ${LUAJIT})
+find_package(LuaJIT REQUIRED)
 
-    find_package(PhysFS REQUIRED)
-    find_package(OpenSSL QUIET)
-    find_package(ZLIB REQUIRED)
-	find_package(OpenGL REQUIRED)
-	find_package(GLEW REQUIRED)
-	find_package(asio REQUIRED)
-	find_package(Threads REQUIRED)
-	find_package(pugixml CONFIG REQUIRED)
-	find_package(STDUUID CONFIG REQUIRED)
+find_package(PhysFS REQUIRED)
+find_package(OpenSSL QUIET)
+find_package(ZLIB REQUIRED)
+find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(asio REQUIRED)
+find_package(Threads REQUIRED)
+find_package(pugixml CONFIG REQUIRED)
+find_package(STDUUID CONFIG REQUIRED)
 
-	find_package(OpenAL CONFIG REQUIRED)
-	find_package(VorbisFile REQUIRED)
-	find_package(Vorbis CONFIG REQUIRED)
-	find_package(Ogg CONFIG REQUIRED)
+find_package(OpenAL CONFIG REQUIRED)
+find_package(VorbisFile REQUIRED)
+find_package(Vorbis CONFIG REQUIRED)
+find_package(Ogg CONFIG REQUIRED)
+if(UNIX AND NOT ANDROID)
+	find_package(X11 REQUIRED)
 endif()
 
 # *****************************************************************************
