@@ -70,9 +70,10 @@ jobs:
         $env:VS_NdkRoot="C:\Android\android-sdk\android-ndk-r25c"
         MSBuild.exe /p:Configuration=Release /p:Platform="ARM64" /p:BUILD_REVISION=${{github.run_number}}
 
-    - name: Upload artifacts
-        uses: actions/upload-artifact@main
-        with:
-          name: ${{ matrix.os }}-${{ matrix.buildtype }}
-          path: |
-            ${{ github.workspace }}/*.apk
+    - name: Upload binaries
+      uses: 'actions/upload-artifact@v2'
+      with:
+        name: Binaries
+        path: |
+          ${{ github.workspace }}/ARM64/Release/otclientv8.apk
+        if-no-files-found: error
