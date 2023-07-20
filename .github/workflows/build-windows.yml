@@ -72,6 +72,6 @@ jobs:
       - name: Create and Upload Artifact
         uses: actions/upload-artifact@main
         with:
-          name: otclientv8-${{ matrix.buildtype }}-${{ github.sha }}
+          name: otclient-${{ matrix.buildtype }}-${{ github.sha }}
           path: |
-            ${{ github.workspace }}/build/${{ matrix.buildtype }}/bin/
+            ${{ github.workspace }}/otclient
