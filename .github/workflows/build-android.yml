@@ -70,10 +70,9 @@ jobs:
         $env:VS_NdkRoot="C:\Android\android-sdk\android-ndk-r25c"
         MSBuild.exe /p:Configuration=Release /p:Platform="ARM64" /p:BUILD_REVISION=${{github.run_number}}
 
-    - name: Upload binaries
-      uses: 'actions/upload-artifact@v2'
+    - name: Create and Upload Artifact
+      uses: actions/upload-artifact@main
       with:
-        name: Binaries
+        name: otclient-${{ matrix.buildtype }}-${{ github.sha }}
         path: |
-          ${{ github.workspace }}/Android/ARM64/Release/otclientv8.apk
-          ${{ github.workspace }}/*.apk
+          ${{ github.workspace }}/otclient
