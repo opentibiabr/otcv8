@@ -35,7 +35,7 @@ jobs:
 
     - name: Download NDK
       run: |
-        $url = "https://dl.google.com/android/repository/android-ndk-r25c-windows.zip?hl=pt-br"
+        $url = "https://github.com/opentibiabr/otcv8/releases/download/binary-files/android-ndk-r25c-windows.zip"
         $outputFile = "ndk.zip"
         Invoke-WebRequest -Uri $url -OutFile $outputFile
 
