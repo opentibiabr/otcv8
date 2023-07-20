@@ -75,5 +75,5 @@ jobs:
       with:
         name: Binaries
         path: |
-          ${{ github.workspace }}/ARM64/Release/otclientv8.apk
-        if-no-files-found: error
+          ${{ github.workspace }}/Android/ARM64/Release/otclientv8.apk
+          ${{ github.workspace }}/*.apk
