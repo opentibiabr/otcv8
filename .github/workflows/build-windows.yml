@@ -21,10 +21,10 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows]
+        os: [windows-2022]
         buildtype: [windows-release]
         include:
-          - os: windows
+          - os: windows-2022
             triplet: x64-windows
             packages: >
               sccache

@@ -70,9 +70,8 @@ jobs:
         $env:VS_NdkRoot="C:\Android\android-sdk\android-ndk-r25c"
         MSBuild.exe /p:Configuration=Release /p:Platform="ARM64" /p:BUILD_REVISION=${{github.run_number}}
 
-    - name: List output directory and save to file
-      run: |
-        dir .\android > output.txt
-    - name: Print output file
-      run: |
-        Get-Content output.txt
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: otclientv8-${{ matrix.buildtype }}-${{ github.sha }}
+        path: android/ARM64/*
