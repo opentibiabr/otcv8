@@ -78,7 +78,7 @@ jobs:
       run: |
         cd android
         $env:VS_NdkRoot="C:\Android\android-sdk\android-ndk-r25c"
-        $env:ANT_HOME="C:\Android\android-sdk\apache-ant-1.9.7"
+        $env:VS_AntHome="C:\Android\android-sdk\apache-ant-1.9.7"
         MSBuild.exe /p:Configuration=Release /p:Platform="ARM64" /p:BUILD_REVISION=${{github.run_number}}
 
     - name: Upload build artifact
