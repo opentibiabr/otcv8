@@ -50,9 +50,9 @@ jobs:
         Invoke-WebRequest -Uri $url -OutFile $output
         Expand-Archive $output -DestinationPath .
         $antPath = Get-Location | Join-Path -ChildPath "apache-ant-1.9.7\bin"
+        $antHome = Get-Location | Join-Path -ChildPath "apache-ant-1.9.7"
 
-        # Adicionar o caminho ao PATH
-        echo "ANT_HOME=$antPath" | Out-File -FilePath $env:GITHUB_ENV -Append
+        echo "ANT_HOME=$antHome" | Out-File -FilePath $env:GITHUB_ENV -Append
         echo "$antPath" | Out-File -FilePath $env:GITHUB_PATH -Append
       shell: pwsh
 
