@@ -27,6 +27,17 @@ jobs:
       uses: microsoft/setup-msbuild@v1.0.2
       id: setup_msbuild
 
+    - name: Install Android SDK
+      run: |
+        $url = "https://github.com/opentibiabr/otcv8/releases/download/binary-files/android-sdk.zip"
+        $outputFile = "sdk.zip"
+        Invoke-WebRequest -Uri $url -OutFile $outputFile
+        7z x $outputFile -aoa -oC:\Android\android-sdk
+
+    - name: Extract SDK
+      run: |
+        7z x sdk.zip -aoa -oC:\Android\android-sdk
+
     - name: Set up JDK 1.8
       uses: actions/setup-java@v2
       with:
@@ -48,10 +59,6 @@ jobs:
         $url = "https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.7-bin.zip"
         $outputFile = "ant.zip"
         Invoke-WebRequest -Uri $url -OutFile $outputFile
-
-        $urlTools = "https://github.com/opentibiabr/otcv8/releases/download/binary-files/tools_r25.2.5-windows.zip"
-        $outputToolsFile = "tools.zip"
-        Invoke-WebRequest -Uri $urlTools -OutFile $outputToolsFile
 
     - name: Extract Ant
       run: |
