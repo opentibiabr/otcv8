@@ -43,18 +43,15 @@ jobs:
       run: |
         7z x ndk.zip -aoa -oC:\Android\android-sdk
 
-    - name: Install Apache Ant and set PATH
+    - name: Download Ant
       run: |
         $url = "https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.7-bin.zip"
-        $output = "apache-ant-1.9.7-bin.zip"
-        Invoke-WebRequest -Uri $url -OutFile $output
-        Expand-Archive $output -DestinationPath .
-        $antPath = Get-Location | Join-Path -ChildPath "apache-ant-1.9.7\bin"
-        $antHome = Get-Location | Join-Path -ChildPath "apache-ant-1.9.7"
+        $outputFile = "ant.zip"
+        Invoke-WebRequest -Uri $url -OutFile $outputFile
 
-        echo "ANT_HOME=$antHome" | Out-File -FilePath $env:GITHUB_ENV -Append
-        echo "$antPath" | Out-File -FilePath $env:GITHUB_PATH -Append
-      shell: pwsh
+    - name: Extract Ant
+      run: |
+        7z x ant.zip -aoa -oC:\Android\android-sdk
 
     - name: Download create_android_assets script
       run: |
@@ -81,6 +78,7 @@ jobs:
       run: |
         cd android
         $env:VS_NdkRoot="C:\Android\android-sdk\android-ndk-r25c"
+        $env:ANT_HOME="C:\Android\android-sdk\apache-ant-1.9.7"
         MSBuild.exe /p:Configuration=Release /p:Platform="ARM64" /p:BUILD_REVISION=${{github.run_number}}
 
     - name: Upload build artifact
