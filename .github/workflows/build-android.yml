@@ -74,4 +74,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: otclientv8-${{ matrix.buildtype }}-${{ github.sha }}
-        path: android/otclientv8/ARM64/Release/otclientv8.apk
+        path: android/otclientv8/ARM64/*
