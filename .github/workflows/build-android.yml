@@ -43,6 +43,19 @@ jobs:
       run: |
         7z x ndk.zip -aoa -oC:\Android\android-sdk
 
+    - name: Install Apache Ant and set PATH
+      run: |
+        $url = "https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.7-bin.zip"
+        $output = "apache-ant-1.9.7-bin.zip"
+        Invoke-WebRequest -Uri $url -OutFile $output
+        Expand-Archive $output -DestinationPath .
+        $antPath = Get-Location | Join-Path -ChildPath "apache-ant-1.9.7\bin"
+
+        # Adicionar o caminho ao PATH
+        echo "ANT_HOME=$antPath" | Out-File -FilePath $env:GITHUB_ENV -Append
+        echo "$antPath" | Out-File -FilePath $env:GITHUB_PATH -Append
+      shell: pwsh
+
     - name: Download create_android_assets script
       run: |
         $url = "https://github.com/opentibiabr/otcv8/releases/download/binary-files/create_android_assets.ps1"
@@ -73,5 +86,5 @@ jobs:
     - name: Upload build artifact
       uses: actions/upload-artifact@v2
       with:
-        name: otclientv8-${{ matrix.buildtype }}-${{ github.sha }}
+        name: otclientv8-android-${{ github.sha }}
         path: android/otclientv8/ARM64/*
