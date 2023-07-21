@@ -63,7 +63,6 @@ jobs:
     - name: Extract Ant
       run: |
         7z x ant.zip -aoa -oC:\Android\android-sdk
-        7z x tools.zip -aoa -oC:\Android\android-sdk
 
     - name: Download create_android_assets script
       run: |
