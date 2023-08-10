@@ -6,6 +6,7 @@ settings = {}
 
 local callDelay = 1000 -- each call delay is also increased by random values (0-callDelay/2)
 local dispatcher = {}
+local refreshEvent = nil
 
 function init()
   g_ui.importStyle('questlogwindow')
@@ -25,7 +26,9 @@ function init()
                     onQuestLine = onGameQuestLine,
                     onGameEnd = offline,
                     onGameStart = online})
-  online()
+  if g_game.isOnline() then
+    online()
+  end
 end
 
 function terminate()
@@ -34,12 +37,19 @@ function terminate()
                        onGameEnd = offline,
                        onGameStart = online})
 
-  offline()
+  if g_game.isOnline() then
+    offline()
+  end
   if questLogButton then
     questLogButton:destroy()
   end
   if questTrackerButton then
     questTrackerButton:destroy()
+  end
+  
+  if refreshEvent then
+    removeEvent(refreshEvent)
+    refreshEvent = nil
   end
 end
 
@@ -62,6 +72,11 @@ function offline()
   -- reset tracker
   trackerWindow.contentsPanel.list:destroyChildren()
   trackerWindow.contentsPanel.list:setHeight(0)
+  
+  if refreshEvent then
+    removeEvent(refreshEvent)
+    refreshEvent = nil
+  end
 end
 
 function online()
@@ -208,7 +223,6 @@ function onTrackOptionChange(checkbox)
     trackerWidget:setVisible(newStatus)
   end
 
-  refreshQuests()
   save()
 end
 
@@ -237,7 +251,7 @@ function refreshQuests()
     end
   end
 
-  scheduleEvent(refreshQuests, callDelay)
+  refreshEvent = scheduleEvent(refreshQuests, callDelay)
 end
 
 function refreshTrackerWidgets()
