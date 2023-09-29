@@ -1,60 +1,96 @@
-# OTCv8 Developer Editon (sources)
+# OTCLientv8
+[![Discord Shield](https://discordapp.com/api/guilds/528117503952551936/widget.png?style=shield)](https://discord.gg/gvTj5sh9Mp)
+[![Build - Android](https://github.com/opentibiabr/otcv8/actions/workflows/build-android.yml/badge.svg)](https://github.com/opentibiabr/otcv8/actions/workflows/build-android.yml)
+[![Build - Ubuntu](https://github.com/opentibiabr/otcv8/actions/workflows/build-ubuntu.yml/badge.svg)](https://github.com/opentibiabr/otcv8/actions/workflows/build-ubuntu.yml)
+[![Build - Windows](https://github.com/opentibiabr/otcv8/actions/workflows/build-windows.yml/badge.svg)](https://github.com/opentibiabr/otcv8/actions/workflows/build-windows.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Ready to use binaries are available in the [Binary Files Release](https://github.com/opentibiabr/otcv8/releases/tag/binary-files) repository.
+Supported platforms:
+- Windows (min. Windows 7)
+- Android (min. 5.0)
+- Linux
+- Mac Os (requires https://www.xquartz.org/)
 
-OTCv8 sources. You can add whatever you want and create pull request with your changes.
-Accepted pull requests will be added to official OTCv8 version, so if you want a new feature in OTCv8, just add it here and wait for approval.
-If you add custom feature, make sure it's optional and can be enabled via g_game.enableFeature function, otherwise your pull request will be rejected.
+### Based on [otcv8/otcv8-dev](https://github.com/otcv8/otcv8-dev) Rev: [229](https://github.com/OTCv8/otcv8-dev/commit/3d32139512cc4576b105682c3579f18fe0d534e4)
 
-This repository uses Github Actions to build and test OTCv8 automaticlly whenever you push changes to repository.
+### Features
 
-## Compilation
+- Rewritten and optimized rendering (60 fps on 11 years old computer)
+- Better DirectX9 and DirectX11 support
+- Adaptive rendering (automated graphics optimizations)
+- Rewritten and optimized light rendering
+- Rewritten path finding and auto walking
+- Rewritten walking system with animations
+- HTTP/HTTPS lua API with JSON support
+- WebSocket lua API
+- Auto updater with failsafe (recovery) mode
+- New filesystem
+- File encryption and compression
+- Automatic diagnostic system
+- Refreshed interface
+- New crash and error handler
+- New HTTP login protocol
+- Ingame shop
+- Updated hotkey manager
+- Updated and optimized battle list
+- Crosshair, floor fading, extra health/mana bars and panels
+- Much more client options
+- Removed a lot of useless and outdated things
+- Advanced bot
+- Linux version
+- Full tibia 11.00 support
+- Layouts
+- New login server (with ingame account and character creation)
+- Support for proxies to lower latency and protect against DDoS
+- And hundreds of smaller features, optimizations and bug fixes!
 
-### Automatic
+### What is otclient?
 
-You can clone repoistory and use github action build-on-request workload.
+Otclient is an alternative Tibia client for usage with otserv. It aims to be complete and flexible,
+for that it uses LUA scripting for all game interface functionality and configurations files with a syntax
+similar to CSS for the client interface design. Otclient works with a modular system, this means
+that each functionality is a separated module, giving the possibility to users modify and customize
+anything easily. Users can also create new mods and extend game interface for their own purposes.
 
-### Windows
+For a server to connect to, you can build your own with [canary](https://github.com/opentibiabr/canary).
 
-You need visual studio 2019 and vcpkg with commit `3b3bd424827a1f7f4813216f6b32b6c61e386b2e` ([download](https://github.com/microsoft/vcpkg/archive/3b3bd424827a1f7f4813216f6b32b6c61e386b2e.zip)).
+### Where do I download?
 
-Then you install vcpkg dependencies:
-```bash
-vcpkg install boost-iostreams:x86-windows-static boost-asio:x86-windows-static boost-beast:x86-windows-static boost-system:x86-windows-static boost-variant:x86-windows-static boost-lockfree:x86-windows-static boost-process:x86-windows-static boost-program-options:x86-windows-static luajit:x86-windows-static glew:x86-windows-static boost-filesystem:x86-windows-static boost-uuid:x86-windows-static physfs:x86-windows-static openal-soft:x86-windows-static libogg:x86-windows-static libvorbis:x86-windows-static zlib:x86-windows-static libzip:x86-windows-static openssl:x86-windows-static
-```
+Compiled binaries can be found here (but can be outdated):
 
-and then you can compile static otcv8 version.
+- [Builds](https://github.com/opentibiabr/otcv8/releases)
 
-### Linux
+**NOTE:** You will need to download spr/dat files on your own and place them in `data/things/VERSION/` (i.e: `data/things/1100/Tibia.spr`)
 
-on linux you need:
-- vcpkg from commit `761c81d43335a5d5ccc2ec8ad90bd7e2cbba734e`
-- boost >=1.67 and libzip-dev, physfs >= 3
-- gcc >=9
+### Getting **Started**
 
-Then just run mkdir build && cd build && cmake .. && make -j8
+* [Gitbook](https://docs.opentibiabr.com/projects/otclientv8).
+* [Wiki](https://github.com/opentibiabr/otcv8/wiki).
 
-### Android
+### Need help?
 
-To compile on android you need to create C:\android with
-- [android-ndk-r21b](https://dl.google.com/android/repository/android-ndk-r21d-windows-x86_64.zip)
-- [android-25](https://dl.google.com/android/repository/platform-25_r03.zip)
-- [platform-tools r34.0.1](https://dl.google.com/android/repository/platform-tools_r34.0.1-windows.zip)
-- [tools r25.2.5](https://dl.google.com/android/repository/tools_r25.2.5-windows.zip)
-- [android_libs.7z](https://github.com/opentibiabr/otcv8/releases/download/binary-files/android_libs.7z)
+Try to ask questions in [discord](https://discord.gg/gvTj5sh9Mp)
 
-Also install android extension for visual studio
-In visual studio go to options -> cross platform -> c++ and set Android NDK to C:\android\android-ndk-r21b
-Right click on otclientv8 -> proporties -> general and change target api level to android-25
+### Issues
 
-#### Follow the same step for the others downloads
+We use the [issue tracker on GitHub](https://github.com/opentibiabr/otcv8/issues). Keep in mind that everyone who is watching the repository gets notified by e-mail when there is an activity, so be thoughtful and avoid writing comments that aren't meant for an issue (e.g. "+1"). If you'd like for an issue to be fixed faster, you should either fix it yourself and submit a pull request, or place a bounty on the issue.
 
-![image](https://github.com/opentibiabr/otcv8/assets/8551443/117f18e6-d77c-4e73-bf42-3bb2e9c9968b)
+### Pull requests
 
-Put data.zip in android/otclientv8/assets
+Before [creating a pull request](https://github.com/opentibiabr/otcv8/pulls) please keep in mind:
 
-## Links
+  * Focus on fixing only one thing, mixing too much things on the same Pull Request make it harder to review, harder to test and if we need to revert the change it will remove other things together.
+  * Follow the project indentation, if your editor support you can use the [editorconfig](https://editorconfig.org/) to automatic configure the indentation.
+  * Avoid opening a Pull Request to just update one line of an file.
 
-- Discord: https://discord.gg/gvTj5sh9Mp
-- Forum: https://docs.opentibiabr.com/
-- Email: opentibiabr@outlook.com
+### Credits
+
+  * [kondra](https://github.com/OTCv8)
+  * [oen432](https://github.com/Oen44)
+  * [vithrax](https://github.com/Vithrax)
+  * [our contributors](https://github.com/opentibiabr/otcv8/graphs/contributors)
+
+### License
+
+Otclient is made available under the MIT License, thus this means that you are free
+to do whatever you want, commercial, non-commercial, closed or open.
