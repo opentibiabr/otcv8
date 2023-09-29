@@ -74,4 +74,4 @@ jobs:
         with:
           name: otclient-${{ matrix.buildtype }}-${{ github.sha }}
           path: |
-            ${{ github.workspace }}/otclient
+            ${{ github.workspace }}/otclient.exe

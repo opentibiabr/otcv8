@@ -1,4 +1,4 @@
-name: Builld - Android
+name: Build - Android
 
 on:
   workflow_dispatch:
@@ -27,40 +27,33 @@ jobs:
       uses: microsoft/setup-msbuild@v1.0.2
       id: setup_msbuild
 
-    - name: Install Android SDK
+    - name: Download Java JDK
       run: |
-        $url = "https://github.com/opentibiabr/otcv8/releases/download/binary-files/android-sdk.zip"
-        $outputFile = "sdk.zip"
+        $url = "https://github.com/opentibiabr/otcv8/releases/download/binary-files/jdk8u302-b08.zip"
+        $outputFile = "jdk.zip"
         Invoke-WebRequest -Uri $url -OutFile $outputFile
-        7z x $outputFile -aoa -oC:\Android\android-sdk
 
-    - name: Extract SDK
+    - name: Extract Java JDK
       run: |
-        7z x sdk.zip -aoa -oC:\Android\android-sdk
+        7z x jdk.zip -aoa -oC:\Android\android-sdk
 
-    - name: Set up JDK 1.8
-      uses: actions/setup-java@v2
-      with:
-        java-version: '8.0.362'
-        distribution: 'temurin'
-
-    - name: Download NDK
+    - name: Download Android NDK
       run: |
-        $url = "https://github.com/opentibiabr/otcv8/releases/download/binary-files/android-ndk-r25c-windows.zip"
+        $url = "https://github.com/opentibiabr/otcv8/releases/download/binary-files/android-ndk-r23c-windows.zip"
         $outputFile = "ndk.zip"
         Invoke-WebRequest -Uri $url -OutFile $outputFile
 
-    - name: Extract NDK
+    - name: Extract Android NDK
       run: |
         7z x ndk.zip -aoa -oC:\Android\android-sdk
 
-    - name: Download Ant
+    - name: Download Apache Ant
       run: |
-        $url = "https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.7-bin.zip"
+        $url = "https://github.com/opentibiabr/otcv8/releases/download/binary-files/apache-ant-1.9.3-bin.zip"
         $outputFile = "ant.zip"
         Invoke-WebRequest -Uri $url -OutFile $outputFile
 
-    - name: Extract Ant
+    - name: Extract Apache Ant
       run: |
         7z x ant.zip -aoa -oC:\Android\android-sdk
 
@@ -70,30 +63,42 @@ jobs:
         $outputFile = "create_android_assets.ps1"
         Invoke-WebRequest -Uri $url -OutFile $outputFile
 
-    - name: Create data.zip for android
+    - name: Create data.zip for Android
       run: |
         powershell -ExecutionPolicy Bypass -File .\create_android_assets.ps1
 
-    - name: Download android libs
+    - name: Download Android Libs
       run: |
         $url = "https://github.com/opentibiabr/otcv8/releases/download/binary-files/android-libs.7z"
         $outputFile = "android_libs.7z"
         Invoke-WebRequest -Uri $url -OutFile $outputFile
 
-    - name: Decompress android libs
+    - name: Extract Android Libs
       run: |
-        7z x android_libs.7z -aoa -oC:\android
+        7z x android_libs.7z -aoa -oC:\Android
 
-    - name: Build for android
+    - name: Download Android Build Tools
+      run: |
+        $url = "https://github.com/opentibiabr/otcv8/releases/download/binary-files/build-tools_r30-windows.zip"
+        $outputFile = "build-tools.zip"
+        Invoke-WebRequest -Uri $url -OutFile $outputFile
+
+    - name: Extract Android Build Tools
+      run: |
+        7z x build-tools.zip -aoa -oC:\Android\android-sdk
+
+    - name: Build for Android
       timeout-minutes: 25
       run: |
         cd android
-        $env:VS_NdkRoot="C:\Android\android-sdk\android-ndk-r25c"
-        $env:VS_AntHome="C:\Android\android-sdk\apache-ant-1.9.7"
+        $env:VS_AndroidHome="C:\Android\android-sdk\build-tools_r30-windows"
+        $env:VS_NdkRoot="C:\Android\android-sdk\android-ndk-r23c"
+        $env:VS_AntHome="C:\Android\android-sdk\apache-ant-1.9.3"
+        $env:VS_JavaHome="C:\Android\android-sdk\jdk8u302-b08"
         MSBuild.exe /p:Configuration=Release /p:Platform="ARM64" /p:BUILD_REVISION=${{github.run_number}}
 
-    - name: Upload build artifact
+    - name: Upload Build Artifact
       uses: actions/upload-artifact@v2
       with:
         name: otclientv8-android-${{ github.sha }}
-        path: android/otclientv8/ARM64/*
+        path: android/otclientv8/ARM64/Release/otclientv8.apk
