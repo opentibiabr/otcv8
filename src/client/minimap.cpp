@@ -106,7 +106,7 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
     Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
     g_drawQueue->addFilledRect(screenRect, color);
 
-    if(MMBLOCK_SIZE*scale <= 1 || !mapCenter.isMapPosition()) {
+    if(static_cast<int>(MMBLOCK_SIZE) * scale <= 1 || !mapCenter.isMapPosition()) {
         return;
     }
 
@@ -115,11 +115,11 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
     Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint())/2;
     Point start = screenRect.topLeft() -(mapRect.topLeft() - blockOff)*scale - off;
 
-    for(int y = blockOff.y, ys = start.y;ys<screenRect.bottom();y += MMBLOCK_SIZE, ys += MMBLOCK_SIZE*scale) {
+    for(int y = blockOff.y, ys = start.y;ys<screenRect.bottom();y += MMBLOCK_SIZE, ys += static_cast<int>(MMBLOCK_SIZE) * scale) {
         if(y < 0 || y >= 65536)
             continue;
 
-        for(int x = blockOff.x, xs = start.x;xs<screenRect.right();x += MMBLOCK_SIZE, xs += MMBLOCK_SIZE*scale) {
+        for(int x = blockOff.x, xs = start.x;xs<screenRect.right();x += MMBLOCK_SIZE, xs += static_cast<int>(MMBLOCK_SIZE) * scale) {
             if(x < 0 || x >= 65536)
                 continue;
 
@@ -133,7 +133,7 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
             const TexturePtr& tex = block.getTexture();
             if(tex) {
                 Rect src(0, 0, MMBLOCK_SIZE, MMBLOCK_SIZE);
-                Rect dest(xs, ys, MMBLOCK_SIZE * scale, MMBLOCK_SIZE * scale);
+                Rect dest(xs, ys, static_cast<int>(MMBLOCK_SIZE) * scale, static_cast<int>(MMBLOCK_SIZE) * scale);
 
                 g_drawQueue->addTexturedRect(dest, tex, src);
             }
