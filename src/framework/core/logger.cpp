@@ -26,11 +26,9 @@
 #include <framework/core/resourcemanager.h>
 #include <framework/core/graphicalapplication.h>
 
-#ifdef FW_GRAPHICS
 #include <framework/platform/platformwindow.h>
 #include <framework/platform/platform.h>
 #include <framework/luaengine/luainterface.h>
-#endif
 
 Logger g_logger;
 
@@ -78,11 +76,9 @@ void Logger::log(Fw::LogLevel level, const std::string& message)
     }
 
     if(level == Fw::LogFatal || (m_testingMode && level == Fw::LogError)) {
-#ifdef FW_GRAPHICS
         if (!m_testingMode) {
             g_window.displayFatalError(message);
         }
-#endif
         ignoreLogs = true;
 #ifdef _MSC_VER
         ::quick_exit(-1);

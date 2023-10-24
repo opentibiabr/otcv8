@@ -45,7 +45,6 @@
 #include <framework/sound/streamsoundsource.h>
 #endif
 
-#ifdef FW_GRAPHICS
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/atlas.h>
 #include <framework/platform/platformwindow.h>
@@ -53,7 +52,6 @@
 #include <framework/graphics/shadermanager.h>
 #include <framework/ui/ui.h>
 #include <framework/input/mouse.h>
-#endif
 
 #include <framework/net/server.h>
 #include <framework/net/protocol.h>
@@ -88,7 +86,7 @@ void Application::registerLuaFunctions()
             while (std::regex_search (s,m,e)) {
                 ret.push_back(std::vector<std::string>());
                 for (auto x:m)
-                    ret[ret.size() - 1].push_back(x);                
+                    ret[ret.size() - 1].push_back(x);
                 s = m.suffix().str();
                 if (--limit == 0)
                     return ret;
@@ -137,7 +135,6 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_app", "getVersion", &Application::getVersion, static_cast<Application*>(&g_app));
     g_lua.bindSingletonFunction("g_app", "getBuildCompiler", &Application::getBuildCompiler, static_cast<Application*>(&g_app));
     g_lua.bindSingletonFunction("g_app", "getBuildDate", &Application::getBuildDate, static_cast<Application*>(&g_app));
-    g_lua.bindSingletonFunction("g_app", "getBuildRevision", &Application::getBuildRevision, static_cast<Application*>(&g_app));
     g_lua.bindSingletonFunction("g_app", "getBuildCommit", &Application::getBuildCommit, static_cast<Application*>(&g_app));
     g_lua.bindSingletonFunction("g_app", "getBuildType", &Application::getBuildType, static_cast<Application*>(&g_app));
     g_lua.bindSingletonFunction("g_app", "getBuildArch", &Application::getBuildArch, static_cast<Application*>(&g_app));
@@ -207,7 +204,7 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_stats", "getSleepTime", &Stats::getSleepTime, &g_stats);
     g_lua.bindSingletonFunction("g_stats", "resetSleepTime", &Stats::resetSleepTime, &g_stats);
     g_lua.bindSingletonFunction("g_stats", "getWidgetsInfo", &Stats::getWidgetsInfo, &g_stats);
-    
+
     g_lua.registerSingletonClass("g_extras");
     g_lua.bindSingletonFunction("g_extras", "set", &Extras::set, &g_extras);
     g_lua.bindSingletonFunction("g_extras", "get", &Extras::get, &g_extras);
@@ -252,8 +249,8 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_resources", "deleteCrashLog", [] { return std::string(); });
 
     g_lua.bindSingletonFunction("g_resources", "resolvePath", &ResourceManager::resolvePath, &g_resources);
-    g_lua.bindSingletonFunction("g_resources", "isLoadedFromMemory", &ResourceManager::isLoadedFromMemory, &g_resources);    
-    g_lua.bindSingletonFunction("g_resources", "isLoadedFromArchive", &ResourceManager::isLoadedFromArchive, &g_resources);    
+    g_lua.bindSingletonFunction("g_resources", "isLoadedFromMemory", &ResourceManager::isLoadedFromMemory, &g_resources);
+    g_lua.bindSingletonFunction("g_resources", "isLoadedFromArchive", &ResourceManager::isLoadedFromArchive, &g_resources);
     g_lua.bindSingletonFunction("g_resources", "listUpdateableFiles", [] { return std::list<std::string>(); } );
     g_lua.bindSingletonFunction("g_resources", "fileChecksum", &ResourceManager::fileChecksum, &g_resources);
     g_lua.bindSingletonFunction("g_resources", "filesChecksums", &ResourceManager::filesChecksums, &g_resources);
@@ -315,7 +312,6 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<ScheduledEvent>("cyclesExecuted", &ScheduledEvent::cyclesExecuted);
     g_lua.bindClassMemberFunction<ScheduledEvent>("maxCycles", &ScheduledEvent::maxCycles);
 
-#ifdef FW_GRAPHICS
     // GraphicalApplication
     g_lua.bindSingletonFunction("g_app", "setMaxFps", &GraphicalApplication::setMaxFps, &g_app);
     g_lua.bindSingletonFunction("g_app", "getMaxFps", &GraphicalApplication::getMaxFps, &g_app);
@@ -378,7 +374,7 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_window", "hasFocus", &PlatformWindow::hasFocus, &g_window);
     g_lua.bindSingletonFunction("g_window", "showTextEditor", &PlatformWindow::showTextEditor, &g_window);
     g_lua.bindSingletonFunction("g_window", "flash", &PlatformWindow::flash, &g_window);
-    
+
     // Input
     g_lua.registerSingletonClass("g_mouse");
     g_lua.bindSingletonFunction("g_mouse", "loadCursors", &Mouse::loadCursors, &g_mouse);
@@ -835,7 +831,6 @@ void Application::registerLuaFunctions()
     g_lua.registerClass<ShaderProgram>();
     g_lua.registerClass<PainterShaderProgram>();
     g_lua.bindClassMemberFunction<PainterShaderProgram>("addMultiTexture", &PainterShaderProgram::addMultiTexture);
-#endif
 
     // Server
     g_lua.registerClass<Server>();

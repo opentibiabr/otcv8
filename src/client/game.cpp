@@ -28,6 +28,7 @@
 #include "container.h"
 #include "statictext.h"
 #include <framework/core/eventdispatcher.h>
+#include <framework/core/graphicalapplication.h>
 #include <framework/ui/uimanager.h>
 #include <framework/core/application.h>
 #include "luavaluecasts_client.h"
@@ -124,7 +125,7 @@ void Game::resetGameStates()
     g_map.resetAwareRange();
 }
 
-void Game::processConnectionError(const boost::system::error_code& ec)
+void Game::processConnectionError(const std::error_code& ec)
 {
     // connection errors only have meaning if we still have a protocol
     if(m_protocolGame) {
@@ -536,7 +537,7 @@ void Game::processWalkCancel(Otc::Direction direction)
     m_localPlayer->cancelWalk(direction);
 }
 
-void Game::processNewWalkCancel(Otc::Direction dir) 
+void Game::processNewWalkCancel(Otc::Direction dir)
 {
     m_walkId += 1;
     m_localPlayer->cancelNewWalk(dir);
@@ -552,7 +553,7 @@ void Game::processPredictiveWalkCancel(const Position& pos, Otc::Direction dir)
 
 void Game::processWalkId(uint32_t walkId)
 {
-    m_walkId = std::max(m_walkId, walkId); // fixes desync
+    m_walkId = std::max<uint32_t>(m_walkId, walkId); // fixes desync
 }
 
 void Game::loginWorld(const std::string& account, const std::string& password, const std::string& worldName, const std::string& worldHost, int worldPort, const std::string& characterName, const std::string& authenticatorToken, const std::string& sessionKey, const std::string& recordTo)
@@ -1035,7 +1036,7 @@ void Game::talkChannel(Otc::MessageMode mode, int channelId, const std::string& 
 {
     if(!canPerformGameAction() || message.empty())
         return;
-        
+
     m_protocolGame->sendTalk(mode, channelId, "", message, m_localPlayer->getPosition(), m_localPlayer->getDirection());
 }
 

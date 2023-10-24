@@ -58,7 +58,7 @@ int main(int argc, const char* argv[]) {
     }
 #endif
 
-    if (g_resources.launchCorrect(g_app.getName(), g_app.getCompactName())) {
+    if (g_resources.launchCorrect(args, g_app.getName(), g_app.getCompactName())) {
         return 0; // started other executable
     }
 
@@ -69,7 +69,7 @@ int main(int argc, const char* argv[]) {
 
     bool testMode = std::find(args.begin(), args.end(), "--test") != args.end();
     if (testMode) {
-        g_logger.setTestingMode();    
+        g_logger.setTestingMode();
     }
 
     // find script init.lua and run it

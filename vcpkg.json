@@ -1,0 +1,29 @@
+{
+  "name": "otcv8",
+  "version-string": "1.0.0",
+  "dependencies": [
+    "asio",
+    "bzip2",
+    "luajit",
+    "glew",
+    "pugixml",
+    "physfs",
+    "openal-soft",
+    "openssl",
+    "libogg",
+    "libvorbis",
+    "liblzma",
+    "zlib",
+    "libzip",
+    "stduuid",
+    {
+      "name": "angle",
+      "platform": "windows"
+    },
+    {
+      "name": "directxsdk",
+      "platform": "windows"
+    }
+  ],
+  "builtin-baseline": "0d1150cbd2f8b3eb9247c51c9f41efbb3be9454b"
+}

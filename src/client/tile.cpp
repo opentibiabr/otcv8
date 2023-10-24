@@ -245,7 +245,7 @@ void Tile::drawWidget(Point dest)
 {
     if (!m_widget)
         return;
-    
+
     Rect dest_rect = m_widget->getRect();
     dest.x += m_widget->getMarginLeft();
     dest.x -= m_widget->getMarginRight();
@@ -260,7 +260,7 @@ void Tile::clean()
 {
     while(!m_things.empty())
         removeThing(m_things.front());
-    
+
     if (m_widget) {
         m_widget->destroy();
         m_widget = nullptr;
@@ -315,7 +315,7 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
             }
 
             for(stackPos = 0; stackPos < (int)m_things.size(); ++stackPos) {
-                int otherPriority = m_things[stackPos]->getStackPriority(); 
+                int otherPriority = m_things[stackPos]->getStackPriority();
                 if((append && otherPriority > priority) || (!append && otherPriority >= priority))
                     break;
             }
@@ -906,7 +906,7 @@ bool Tile::canShoot(int distance)
     auto player = g_game.getLocalPlayer();
     if (!player) return false;
     auto playerPos = player->getPrewalkingPosition();
-    if(distance > 0 && std::max<int>(std::abs<int>(m_position.x - playerPos.x), std::abs<int>(m_position.y - playerPos.y)) > distance)
+    if(distance > 0 && std::max<int>(std::abs(m_position.x - playerPos.x), std::abs(m_position.y - playerPos.y)) > distance)
        return false;
     return g_map.isSightClear(playerPos, m_position);
 }

@@ -21,7 +21,13 @@
  */
 
 #include "application.h"
+
 #include <csignal>
+#include <cstdlib>
+#include <chrono>
+#include <vector>
+#include <string>
+
 #include <framework/core/clock.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/core/modulemanager.h>
@@ -32,10 +38,6 @@
 #include <framework/platform/crashhandler.h>
 #include <framework/platform/platform.h>
 #include <framework/http/http.h>
-
-#if not(defined(ANDROID) || defined(FREE_VERSION))
-#include <boost/process.hpp>
-#endif
 
 #include <locale>
 
@@ -183,13 +185,11 @@ void Application::close()
 void Application::restart()
 {
 #if not(defined(ANDROID) || defined(FREE_VERSION))
-    boost::process::child c(g_resources.getBinaryName());
-    std::error_code ec2;
-    if (c.wait_for(std::chrono::seconds(1), ec2)) {
-        g_logger.fatal("Updater restart error. Please restart application");
-    }
-    c.detach();
-    quick_exit();
+    std::string binaryName = g_resources.getBinaryName();
+    std::system(binaryName.c_str());
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    g_logger.fatal("Updater restart error. Please restart application");
+    std::quick_exit(0);
 #else
     exit();
 #endif
@@ -198,13 +198,18 @@ void Application::restart()
 void Application::restartArgs(const std::vector<std::string>& args)
 {
 #if not(defined(ANDROID) || defined(FREE_VERSION))
-    boost::process::child c(g_resources.getBinaryName(), boost::process::args(args));
-    std::error_code ec2;
-    if (c.wait_for(std::chrono::seconds(1), ec2)) {
-        g_logger.fatal("Updater restart error. Please restart application");
+    std::string binaryName = g_resources.getBinaryName();
+    std::vector<const char*> argv;
+    argv.reserve(args.size() + 2);
+    argv.push_back(binaryName.c_str());
+    for (const std::string& arg : args) {
+        argv.push_back(arg.c_str());
     }
-    c.detach();
-    quick_exit();
+    argv.push_back(nullptr);
+    execv(binaryName.c_str(), const_cast<char* const*>(argv.data()));
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    g_logger.fatal("Updater restart error. Please restart application");
+    std::quick_exit(0);
 #else
     exit();
 #endif

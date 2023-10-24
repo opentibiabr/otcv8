@@ -7,24 +7,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "otclient", "otclient.vcxpro
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug_lib|Win32 = Debug_lib|Win32
-		Debug_lib|x64 = Debug_lib|x64
-		Debug|Win32 = Debug|Win32
-		Debug|x64 = Debug|x64
 		DirectX|Win32 = DirectX|Win32
 		DirectX|x64 = DirectX|x64
 		OpenGL|Win32 = OpenGL|Win32
 		OpenGL|x64 = OpenGL|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{17A8F78F-1FFB-4128-A3B3-59CC6C19D89A}.Debug_lib|Win32.ActiveCfg = Debug_lib|Win32
-		{17A8F78F-1FFB-4128-A3B3-59CC6C19D89A}.Debug_lib|Win32.Build.0 = Debug_lib|Win32
-		{17A8F78F-1FFB-4128-A3B3-59CC6C19D89A}.Debug_lib|x64.ActiveCfg = Debug_lib|x64
-		{17A8F78F-1FFB-4128-A3B3-59CC6C19D89A}.Debug_lib|x64.Build.0 = Debug_lib|x64
-		{17A8F78F-1FFB-4128-A3B3-59CC6C19D89A}.Debug|Win32.ActiveCfg = Debug|Win32
-		{17A8F78F-1FFB-4128-A3B3-59CC6C19D89A}.Debug|Win32.Build.0 = Debug|Win32
-		{17A8F78F-1FFB-4128-A3B3-59CC6C19D89A}.Debug|x64.ActiveCfg = Debug|x64
-		{17A8F78F-1FFB-4128-A3B3-59CC6C19D89A}.Debug|x64.Build.0 = Debug|x64
 		{17A8F78F-1FFB-4128-A3B3-59CC6C19D89A}.DirectX|Win32.ActiveCfg = DirectX|Win32
 		{17A8F78F-1FFB-4128-A3B3-59CC6C19D89A}.DirectX|Win32.Build.0 = DirectX|Win32
 		{17A8F78F-1FFB-4128-A3B3-59CC6C19D89A}.DirectX|x64.ActiveCfg = DirectX|x64
@@ -35,7 +23,7 @@ Global
 		{17A8F78F-1FFB-4128-A3B3-59CC6C19D89A}.OpenGL|x64.Build.0 = OpenGL|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = TRUE
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9729773E-3760-4D27-9CB3-F3AC2A011E79}

@@ -5,12 +5,12 @@ DEFAULT_LAYOUT = "retro" -- on android it's forced to "mobile", check code bello
 
 -- If you don't use updater or other service, set it to updater = ""
 Services = {
-  website = "http://yourwebsite", -- currently not used
+  website = "https://docs.opentibiabr.com/",
   updater = "",--"http://yourwebsite/api/updater.php"
-  stats = "",
-  crash = "http://yourwebsite/api/crash.php",
-  feedback = "http://yourwebsite/api/feedback.php",
-  status = "http://yourwebsite/api/status.php"
+  stats = "", -- --"http://yourwebsite/api/stats.php"
+  crash = "", --"http://yourwebsite/api/crash.php",
+  feedback = "",--"http://yourwebsite/api/feedback.php",
+  status = "http://docs.opentibiabr.com" --http://yourwebsite/api/status.php"
 }
 
 -- Servers accept http login url, websocket login url or ip:port:version
@@ -28,7 +28,7 @@ g_app.setName("OTCv8")
 
 -- print first terminal message
 g_logger.info(os.date("== application started at %b %d %Y %X"))
-g_logger.info(g_app.getName() .. ' ' .. g_app.getVersion() .. ' rev ' .. g_app.getBuildRevision() .. ' (' .. g_app.getBuildCommit() .. ') made by ' .. g_app.getAuthor() .. ' built on ' .. g_app.getBuildDate() .. ' for arch ' .. g_app.getBuildArch())
+g_logger.info(g_app.getName() .. ' ' .. g_app.getVersion() .. ' (' .. g_app.getBuildCommit() .. ') made by ' .. g_app.getAuthor() .. ' built on ' .. g_app.getBuildDate() .. ' for arch ' .. g_app.getBuildArch())
 
 if not g_resources.directoryExists("/data") then
   g_logger.fatal("Data dir doesn't exist.")

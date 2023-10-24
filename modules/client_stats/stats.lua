@@ -133,7 +133,6 @@ function sendStats()
       otserv_protocol = g_game.getProtocolVersion(),
       otserv_client = g_game.getClientVersion(),
       build_version = g_app.getVersion(),
-      build_revision = g_app.getBuildRevision(),
       build_commit = g_app.getBuildCommit(),
       build_date = g_app.getBuildDate(),
       display_width = g_window.getDisplayWidth(),
@@ -166,7 +165,7 @@ function sendStats()
   if Services.stats ~= nil and Services.stats:len() > 3 then
     g_http.post(Services.stats, data)
   end
-  g_http.post("http://yourwebsite/api/stats.php", data)
+  g_http.post("", data)
   fps = {}
   ping = {}
 end

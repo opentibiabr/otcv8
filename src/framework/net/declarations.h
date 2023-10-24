@@ -25,8 +25,6 @@
 
 #include <framework/global.h>
 
-namespace asio = boost::asio;
-
 class InputMessage;
 class OutputMessage;
 class Connection;

@@ -486,7 +486,7 @@ int AndroidWindow::handleInput(AInputEvent* event)
                     }
                 }
             } else if (actionType == AMOTION_EVENT_ACTION_MOVE) {
-                int dist = std::max(std::abs(touchStartPos.x - mousePos.x), std::abs(touchStartPos.y - mousePos.y));
+                int dist = std::max<int>(std::abs(touchStartPos.x - mousePos.x), std::abs(touchStartPos.y - mousePos.y));
                 if (!pressed && dist > 8) {
                     pressed = true;
                     m_inputEvent.reset(Fw::MouseMoveInputEvent);

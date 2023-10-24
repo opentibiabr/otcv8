@@ -11,6 +11,8 @@
 #include <client/spritemanager.h>
 #include <client/outfit.h>
 
+#include <algorithm>
+
 std::shared_ptr<DrawQueue> g_drawQueue;
 
 void DrawQueueItemTextureCoords::draw()
@@ -114,7 +116,7 @@ bool DrawQueueItemFilledRect::cache()
 {
     if (!g_drawCache.hasSpace(6)) return false;
     g_drawCache.addRect(m_dest, m_color);
-    return true; 
+    return true;
 }
 
 void DrawQueueItemClearRect::draw()
@@ -201,7 +203,7 @@ void DrawQueue::setFrameBuffer(const Rect& dest, const Size& size, const Rect& s
     m_frameBufferSize = size;
     m_frameBufferDest = dest;
     m_frameBufferSrc = src;
-    size_t max_size = std::max(m_frameBufferSize.width(), m_frameBufferSize.height());
+    size_t max_size = std::max<int>(m_frameBufferSize.width(), m_frameBufferSize.height());
     while(max_size > 2048u) {
         max_size /= 2;
         m_scaling /= 2.f;
@@ -307,10 +309,10 @@ void DrawQueue::draw(DrawType drawType)
     Size originalResolution = g_painter->getResolution();
     if (m_scaling > 0.f && m_scaling < 0.99f) {
         Size resolution = originalResolution * (1.f / m_scaling);
-        Matrix3 projectionMatrix = { 
+        Matrix3 projectionMatrix = {
             2.0f / resolution.width(),  0.0f,                      0.0f,
             0.0f,                    -2.0f / resolution.height(),  0.0f,
-            -1.0f,                     1.0f,                      1.0f 
+            -1.0f,                     1.0f,                      1.0f
         };
         g_painter->setProjectionMatrix(projectionMatrix);
     }

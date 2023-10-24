@@ -57,7 +57,6 @@ public:
     std::string getCharset() { return m_charset; }
     std::string getBuildCompiler() { return BUILD_COMPILER; }
     std::string getBuildDate() { return std::string(__DATE__); }
-    std::string getBuildRevision() { return std::to_string(BUILD_REVISION); }
     std::string getBuildCommit() { return BUILD_COMMIT; }
 #ifdef FREE_VERSION
     std::string getBuildType() { return "FREE"; }
@@ -88,10 +87,6 @@ protected:
     stdext::boolean<false> m_mobile;
 };
 
-#ifdef FW_GRAPHICS
 #include "graphicalapplication.h"
-#else
-#include "consoleapplication.h"
-#endif
 
 #endif

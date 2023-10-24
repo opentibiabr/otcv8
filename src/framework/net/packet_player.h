@@ -9,7 +9,7 @@ public:
     PacketPlayer(const std::string& file);
     virtual ~PacketPlayer();
 
-    void start(std::function<void(std::shared_ptr<std::vector<uint8_t>>)> recvCallback, std::function<void(boost::system::error_code)> disconnectCallback);
+    void start(std::function<void(std::shared_ptr<std::vector<uint8_t>>)> recvCallback, std::function<void(std::error_code)> disconnectCallback);
     void stop();
 
     void onOutputPacket(const OutputMessagePtr& packet);
@@ -22,5 +22,5 @@ private:
     std::deque<std::pair<ticks_t, std::shared_ptr<std::vector<uint8_t>>>> m_input;
     std::deque<std::pair<ticks_t, std::shared_ptr<std::vector<uint8_t>>>> m_output;
     std::function<void(std::shared_ptr<std::vector<uint8_t>>)> m_recvCallback;
-    std::function<void(boost::system::error_code)> m_disconnectCallback;
+    std::function<void(std::error_code)> m_disconnectCallback;
 };

@@ -5,7 +5,7 @@
 #endif
 
 #include <cstdint>
-#include <boost/asio.hpp>
+#include <asio.hpp>
 #include <memory>
 #include <string>
 #include <list>
@@ -34,7 +34,7 @@ class Proxy : public std::enable_shared_from_this<Proxy> {
         STATE_CONNECTED
     };
 public:
-    Proxy(boost::asio::io_context& io, const std::string& host, uint16_t port, int priority)
+    Proxy(asio::io_context& io, const std::string& host, uint16_t port, int priority)
         : m_io(io), m_timer(io), m_socket(io), m_resolver(io), m_state(STATE_NOT_CONNECTED)
     {
         m_host = host;
@@ -62,7 +62,7 @@ public:
     void send(const ProxyPacketPtr& packet);
 
 private:
-    void check(const boost::system::error_code& ec = boost::system::error_code());
+    void check(const std::error_code& ec = std::error_code());
     void connect();
     void disconnect();
 
@@ -70,14 +70,14 @@ private:
     void onPing(uint32_t packetId);
 
     void readHeader();
-    void onHeader(const boost::system::error_code& ec, std::size_t bytes_transferred);
-    void onPacket(const boost::system::error_code& ec, std::size_t bytes_transferred);
-    void onSent(const boost::system::error_code& ec, std::size_t bytes_transferred);
+    void onHeader(const std::error_code& ec, std::size_t bytes_transferred);
+    void onPacket(const std::error_code& ec, std::size_t bytes_transferred);
+    void onSent(const std::error_code& ec, std::size_t bytes_transferred);
 
-    boost::asio::io_context& m_io;
-    boost::asio::steady_timer m_timer;
-    boost::asio::ip::tcp::socket m_socket;
-    boost::asio::ip::tcp::resolver m_resolver;
+    asio::io_context& m_io;
+    asio::steady_timer m_timer;
+    asio::ip::tcp::socket m_socket;
+    asio::ip::tcp::resolver m_resolver;
 
     ProxyState m_state;
 
@@ -110,7 +110,7 @@ class Session : public std::enable_shared_from_this<Session> {
     static constexpr int BUFFER_SIZE = 65535;
     static constexpr int TIMEOUT = 30000;
 public:
-    Session(boost::asio::io_context& io, boost::asio::ip::tcp::socket socket, int port)
+    Session(asio::io_context& io, asio::ip::tcp::socket socket, int port)
         : m_io(io), m_timer(io), m_socket(std::move(socket))
     {
         m_id = (std::chrono::high_resolution_clock::now().time_since_epoch().count()) & 0xFFFFFFFF;
@@ -119,7 +119,7 @@ public:
         m_useSocket = true;
     }
 
-    Session(boost::asio::io_context& io, int port, std::function<void(ProxyPacketPtr)> recvCallback, std::function<void(boost::system::error_code)> disconnectCallback)
+    Session(asio::io_context& io, int port, std::function<void(ProxyPacketPtr)> recvCallback, std::function<void(std::error_code)> disconnectCallback)
         : m_io(io), m_timer(io), m_socket(io)
     {
         m_id = (std::chrono::high_resolution_clock::now().time_since_epoch().count()) & 0xFFFFFFFF;
@@ -133,25 +133,25 @@ public:
     // thread safe
     uint32_t getId() { return m_id; }
     void start(int maxConnections = 3);
-    void terminate(boost::system::error_code ec = boost::asio::error::eof);
+    void terminate(std::error_code ec = asio::error::eof);
     void onPacket(const ProxyPacketPtr& packet);
 
     // not thread safe
     void onProxyPacket(uint32_t packetId, uint32_t lastRecivedPacketId, const ProxyPacketPtr& packet);
 
 private:
-    void check(const boost::system::error_code& ec);
+    void check(const std::error_code& ec);
     void selectProxies();
 
     void readTibia12Header();
     void readHeader();
-    void onHeader(const boost::system::error_code& ec, std::size_t bytes_transferred);
-    void onBody(const boost::system::error_code& ec, std::size_t bytes_transferred);
-    void onSent(const boost::system::error_code& ec, std::size_t bytes_transferred);
+    void onHeader(const std::error_code& ec, std::size_t bytes_transferred);
+    void onBody(const std::error_code& ec, std::size_t bytes_transferred);
+    void onSent(const std::error_code& ec, std::size_t bytes_transferred);
 
-    boost::asio::io_context& m_io;
-    boost::asio::steady_timer m_timer;
-    boost::asio::ip::tcp::socket m_socket;
+    asio::io_context& m_io;
+    asio::steady_timer m_timer;
+    asio::ip::tcp::socket m_socket;
 
     uint32_t m_id;
     uint16_t m_port;
@@ -159,7 +159,7 @@ private:
     bool m_terminated = false;
 
     std::function<void(ProxyPacketPtr)> m_recvCallback = nullptr;
-    std::function<void(boost::system::error_code)> m_disconnectCallback = nullptr;
+    std::function<void(std::error_code)> m_disconnectCallback = nullptr;
 
     std::set<ProxyPtr> m_proxies;
 

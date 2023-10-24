@@ -24,7 +24,6 @@
 
 #include "string.h"
 #include "format.h"
-#include <boost/algorithm/string.hpp>
 #include <ctype.h>
 #include <physfs.h>
 
@@ -91,6 +90,16 @@ uint64_t hex_to_dec(const std::string& str)
     std::istringstream i(str);
     i >> std::hex >> num;
     return num;
+}
+
+void hexStringToBytes(const std::string& hexStr, std::string& bytes)
+{
+    bytes.clear();
+    for (std::size_t i = 0; i < hexStr.length(); i += 2) {
+        std::string byteStr = hexStr.substr(i, 2);
+        char byte = static_cast<char>(std::stoi(byteStr, nullptr, 16));
+        bytes.push_back(byte);
+    }
 }
 
 bool is_valid_utf8(const std::string& src)
@@ -246,7 +255,8 @@ void toupper(std::string& str)
 
 void trim(std::string& str)
 {
-    boost::trim(str);
+    str.erase(str.find_last_not_of(' ') + 1);
+	str.erase(0, str.find_first_not_of(' '));
 }
 
 char upchar(char c)
@@ -278,23 +288,40 @@ void ucwords(std::string& str)
 
 bool ends_with(const std::string& str, const std::string& test)
 {
-    return boost::ends_with(str, test);
+    return str.size() >= test.size() && str.compare(str.size() - test.size(), test.size(), test) == 0;
 }
 
 bool starts_with(const std::string& str, const std::string& test)
 {
-    return boost::starts_with(str, test);
+    return str.size() >= test.size() && str.compare(0, test.size(), test) == 0;
 }
 
 void replace_all(std::string& str, const std::string& search, const std::string& replacement)
 {
-    return boost::replace_all(str, search, replacement);
+    size_t startPos = 0;
+    while ((startPos = str.find(search, startPos)) != std::string::npos)
+    {
+        str.replace(startPos, search.length(), replacement);
+        startPos += replacement.length();
+    }
 }
 
 std::vector<std::string> split(const std::string& str, const std::string& separators)
 {
     std::vector<std::string> splitted;
-    boost::split(splitted, str, boost::is_any_of(std::string(separators)));
+    size_t startPos = 0;
+    size_t endPos = str.find_first_of(separators);
+
+    while (endPos != std::string::npos)
+    {
+        splitted.push_back(str.substr(startPos, endPos - startPos));
+        startPos = endPos + 1;
+        endPos = str.find_first_of(separators, startPos);
+    }
+
+    if (startPos < str.length())
+        splitted.push_back(str.substr(startPos));
+
     return splitted;
 }
 

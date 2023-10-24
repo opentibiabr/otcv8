@@ -29,7 +29,7 @@ void LightView::addLight(const Point& pos, uint8_t color, uint8_t intensity)
     if (!m_lights.empty()) {
         Light& prevLight = m_lights.back();
         if (prevLight.pos == pos && prevLight.color == color) {
-            prevLight.intensity = std::max(prevLight.intensity, intensity);
+            prevLight.intensity = std::max<uint8_t>(prevLight.intensity, intensity);
             return;
         }
     }

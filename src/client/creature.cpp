@@ -80,7 +80,7 @@ Creature::~Creature()
 }
 
 void Creature::draw(const Point& dest, bool animate, LightView* lightView)
-{   
+{
     if (!canBeSeen())
         return;
 
@@ -120,7 +120,7 @@ void Creature::draw(const Point& dest, bool animate, LightView* lightView)
         if (light.color == 0 || light.color > 215)
             light.color = 215;
     }
-    
+
     if(lightView)
         lightView->addLight(creatureCenter, light);
 }
@@ -149,7 +149,7 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
     Rect backgroundRect = Rect(point.x + m_informationOffset.x - (13.5), point.y + m_informationOffset.y, 27, 4);
     backgroundRect.bind(parentRect);
 
-    //debug            
+    //debug
     if (g_extras.debugWalking) {
         int footDelay = (getStepDuration(true)) / 3;
         int footAnimPhases = getWalkAnimationPhases() - 1;
@@ -582,13 +582,13 @@ void Creature::nextWalkUpdate()
     if (!m_walking) {
         return;
     }
-	
+
 	auto self = static_self_cast<Creature>();
     m_walkUpdateEvent = g_dispatcher.scheduleEvent([self]{
         self->m_walkUpdateEvent = nullptr;
         self->nextWalkUpdate();
-    }, g_game.getFeature(Otc::GameNewUpdateWalk) ? 
-        std::max(getStepDuration(true) / std::max(g_app.getFps(), 1), 1) : (float)getStepDuration() / g_sprites.spriteSize()
+    }, g_game.getFeature(Otc::GameNewUpdateWalk) ?
+        std::max<uint16_t>(getStepDuration(true) / std::max<int>(g_app.getFps(), 1), 1) : (float)getStepDuration() / g_sprites.spriteSize()
     );
 }
 
@@ -596,7 +596,7 @@ void Creature::updateWalk()
 {
     float walkTicksPerPixel = ((float)(getStepDuration(true) + (g_game.getFeature(Otc::GameNewUpdateWalk) ? 0 : 10))) / (float)g_sprites.spriteSize();
     uint8 totalPixelsWalked = std::min<uint8>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, g_sprites.spriteSize());
-    uint8 totalPixelsWalkedInNextFrame = std::min<uint8>((m_walkTimer.ticksElapsed() + (g_game.getFeature(Otc::GameNewUpdateWalk) ? std::max(1000.f / g_app.getFps(), 1.0f) : 15)) / walkTicksPerPixel, g_sprites.spriteSize());
+    uint8 totalPixelsWalkedInNextFrame = std::min<uint8>((m_walkTimer.ticksElapsed() + (g_game.getFeature(Otc::GameNewUpdateWalk) ? std::max<float>(1000.f / g_app.getFps(), 1.0f) : 15)) / walkTicksPerPixel, g_sprites.spriteSize());
 
     // needed for paralyze effect
     m_walkedPixels = std::max<uint8>(m_walkedPixels, totalPixelsWalked);
@@ -1080,7 +1080,7 @@ void Creature::removeBottomWidget(const UIWidgetPtr& widget)
 }
 
 void Creature::removeDirectionalWidget(const UIWidgetPtr& widget)
-{    
+{
     auto it = m_directionalWidgets.erase(std::remove(m_directionalWidgets.begin(), m_directionalWidgets.end(), widget));
     while (it != m_topWidgets.end()) {
         (*it)->destroy();

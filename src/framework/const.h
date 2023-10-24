@@ -32,10 +32,6 @@
 #define BUILD_COMMIT "dev"
 #endif
 
-#ifndef BUILD_REVISION
-#define BUILD_REVISION 0
-#endif
-
 #ifndef BUILD_TYPE
 #define BUILD_TYPE "unknown"
 #endif

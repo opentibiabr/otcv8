@@ -6,7 +6,7 @@
         WIN32;
         _CRT_SECURE_NO_WARNINGS;
         _WIN32_WINNT=0x0501;
-		    WINVER=0x0501;
+        WINVER=0x0501;
         OTCLIENT;
         CRASH_HANDLER;
         FW_GRAPHICS;
@@ -30,31 +30,36 @@
         shell32.lib;
         gdi32.lib;
         advapi32.lib;
-    		Ole32.lib;
+        Ole32.lib;
         psapi.lib;
-        bcrypt.lib;		
+        bcrypt.lib;
         ucrt.lib;
         vcruntime.lib;
         msvcrt.lib;
         mincore_downlevel.lib;
-        mincore.lib;    
+        mincore.lib;
+        glew32.lib;
+        libEGL.lib;
+        libGLESv2.lib;
+        vorbis.lib;
+        ogg.lib;
+        bz2.lib;
+        zip.lib;
+        OpenAL32.lib;
+        lzma.lib;
+        vorbisfile.lib;
+        zlib.lib;
+        libcrypto.lib;
+        dxgi.lib;
+        d3d9.lib;
+        d3d11.lib;
+        dxguid.lib;
     </OTCLIENT_LIBDEPS>
   </PropertyGroup>
   <PropertyGroup>
     <OutDir>$(ProjectDir)../</OutDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
-  <PropertyGroup Label="Globals">
-   <VcpkgConfiguration>Release</VcpkgConfiguration>
-	 <VcpkgTriplet Condition="'$(Platform)'=='Win32'">x86-windows-static</VcpkgTriplet>
-	 <VcpkgTriplet Condition="'$(Platform)'=='x64'">x64-windows-static</VcpkgTriplet>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(BUILD_REVISION)' != '' ">
-    <PREPROCESSOR_DEFS>
-      $(PREPROCESSOR_DEFS);
-      BUILD_REVISION=$(BUILD_REVISION)
-    </PREPROCESSOR_DEFS>
-  </PropertyGroup>  
   <ItemDefinitionGroup>
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -63,7 +68,7 @@
     <Link>
       <AdditionalDependencies>$(OTCLIENT_LIBDEPS)</AdditionalDependencies>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-      <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib;ANGLE.lib;OpenGL32.Lib</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
       <SubSystem>Windows</SubSystem>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>

@@ -27,10 +27,6 @@
 #include <framework/platform/platform.h>
 #include <framework/core/application.h>
 
-#include <boost/uuid/uuid_generators.hpp>
-#include <boost/uuid/uuid_io.hpp>
-#include <boost/functional/hash.hpp>
-
 #ifndef __EMSCRIPTEN__
 #include <openssl/rsa.h>
 #include <openssl/sha.h>
@@ -160,48 +156,58 @@ std::string Crypt::xorCrypt(const std::string& buffer, const std::string& key)
 
 std::string Crypt::genUUID()
 {
-    boost::uuids::random_generator gen;
-    boost::uuids::uuid u = gen();
-    return boost::uuids::to_string(u);
+    std::random_device rd;
+    auto seed_data = std::array<int, std::mt19937::state_size> {};
+    std::generate(std::begin(seed_data), std::end(seed_data), std::ref(rd));
+    std::seed_seq seq(std::begin(seed_data), std::end(seed_data));
+    std::mt19937 generator(seq);
+
+    return to_string(uuids::uuid_random_generator{ generator }());
 }
 
 bool Crypt::setMachineUUID(std::string uuidstr)
 {
-    if(uuidstr.empty())
+    if (uuidstr.empty())
         return false;
+
     uuidstr = _decrypt(uuidstr, false);
-    if(uuidstr.length() != 16)
+
+    if (uuidstr.length() != 36)
         return false;
-    std::copy(uuidstr.begin(), uuidstr.end(), m_machineUUID.begin());
+
+    m_machineUUID = uuids::uuid::from_string(uuidstr).value();
+
     return true;
 }
 
 std::string Crypt::getMachineUUID()
 {
-    if(m_machineUUID.is_nil()) {
-        boost::uuids::random_generator gen;
-        m_machineUUID = gen();
+    if (m_machineUUID.is_nil()) {
+        std::random_device rd;
+        auto seed_data = std::array<int, std::mt19937::state_size> {};
+        std::generate(std::begin(seed_data), std::end(seed_data), std::ref(rd));
+        std::seed_seq seq(std::begin(seed_data), std::end(seed_data));
+        std::mt19937 generator(seq);
+
+        m_machineUUID = uuids::uuid_random_generator{ generator }();
     }
-    return _encrypt(std::string(m_machineUUID.begin(), m_machineUUID.end()), false);
+
+    return _encrypt(to_string(m_machineUUID), false);
 }
 
 std::string Crypt::getCryptKey(bool useMachineUUID)
 {
-    boost::hash<boost::uuids::uuid> uuid_hasher;
-    boost::uuids::uuid uuid;
-    if(useMachineUUID) {
-        uuid = m_machineUUID;
-    } else {
-        boost::uuids::nil_generator nilgen;
-        uuid = nilgen();
-    }
-    boost::uuids::name_generator namegen(uuid);
-    boost::uuids::uuid u = namegen(g_app.getCompactName() + g_platform.getCPUName() + g_platform.getOSName());
-    std::size_t hash = uuid_hasher(u);
+    constexpr std::hash<uuids::uuid> uuid_hasher;
+    const uuids::uuid uuid = useMachineUUID ? m_machineUUID : uuids::uuid();
+    const uuids::uuid u = uuids::uuid_name_generator(uuid)
+        (g_app.getCompactName() + g_platform.getCPUName() + g_platform.getOSName());
+    const std::size_t hash = uuid_hasher(u);
+
     std::string key;
-    key.assign((const char *)&hash, sizeof(hash));
+    key.assign((const char*)&hash, sizeof(hash));
     return key;
 }
+
 
 std::string Crypt::_encrypt(const std::string& decrypted_string, bool useMachineUUID)
 {
