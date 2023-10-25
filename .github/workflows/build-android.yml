@@ -4,7 +4,11 @@ on:
   workflow_dispatch:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'src/**'
   push:
+    paths:
+      - 'src/**'
     branches:
       - main
 
@@ -13,6 +17,15 @@ env:
   MAKEFLAGS: '-j 2'
 
 jobs:
+  cancel-runs:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Cancel Previous Runs
+      uses: styfle/cancel-workflow-action@0.9.1
+      with:
+        access_token: ${{ github.token }}
+
   Android:
     name: android-25
     runs-on: windows-2022
@@ -49,7 +62,7 @@ jobs:
 
     - name: Download Apache Ant
       run: |
-        $url = "https://github.com/opentibiabr/otcv8/releases/download/binary-files/apache-ant-1.9.3-bin.zip"
+        $url = "https://github.com/opentibiabr/otcv8/releases/download/binary-files/apache-ant-1.9.7-bin.zip"
         $outputFile = "ant.zip"
         Invoke-WebRequest -Uri $url -OutFile $outputFile
 
@@ -93,12 +106,12 @@ jobs:
         cd android
         $env:VS_AndroidHome="C:\Android\android-sdk\build-tools_r30-windows"
         $env:VS_NdkRoot="C:\Android\android-sdk\android-ndk-r23c"
-        $env:VS_AntHome="C:\Android\android-sdk\apache-ant-1.9.3"
+        $env:VS_AntHome="C:\Android\android-sdk\apache-ant-1.9.7"
         $env:VS_JavaHome="C:\Android\android-sdk\jdk8u302-b08"
-        MSBuild.exe /p:Configuration=Release /p:Platform="ARM64" /p:BUILD_REVISION=${{github.run_number}}
+        MSBuild.exe /p:Configuration=Release /p:Platform="ARM" /p:BUILD_REVISION=${{github.run_number}}
 
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v2
       with:
         name: otclientv8-android-${{ github.sha }}
-        path: android/otclientv8/ARM64/Release/otclientv8.apk
+        path: android/otclientv8/ARM/Release/otclientv8_armv7a.apk
