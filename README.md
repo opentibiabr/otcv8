@@ -1,4 +1,4 @@
-# OTCLientv8
+# OTClientV8
 [![Discord Shield](https://discordapp.com/api/guilds/528117503952551936/widget.png?style=shield)](https://discord.gg/gvTj5sh9Mp)
 [![Build - Android](https://github.com/opentibiabr/otcv8/actions/workflows/build-android.yml/badge.svg)](https://github.com/opentibiabr/otcv8/actions/workflows/build-android.yml)
 [![Build - Ubuntu](https://github.com/opentibiabr/otcv8/actions/workflows/build-ubuntu.yml/badge.svg)](https://github.com/opentibiabr/otcv8/actions/workflows/build-ubuntu.yml)
@@ -54,22 +54,13 @@ anything easily. Users can also create new mods and extend game interface for th
 
 For a server to connect to, you can build your own with [canary](https://github.com/opentibiabr/canary).
 
-### Where do I download?
-
-Compiled binaries can be found here (but can be outdated):
-
-- [Builds](https://github.com/opentibiabr/otcv8/releases)
-
-**NOTE:** You will need to download spr/dat files on your own and place them in `data/things/VERSION/` (i.e: `data/things/1100/Tibia.spr`)
-
 ### Getting **Started**
 
-* [Gitbook](https://docs.opentibiabr.com/projects/otclientv8).
-* [Wiki](https://github.com/opentibiabr/otcv8/wiki).
+* [Gitbook](https://docs.opentibiabr.com/opentibiabr/projects/otclientv8).
 
 ### Need help?
 
-Try to ask questions in [discord](https://discord.gg/gvTj5sh9Mp)
+Try to ask questions in [discord](https://discord.gg/gvTj5sh9Mp).
 
 ### Issues
 
