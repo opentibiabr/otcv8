@@ -56,15 +56,16 @@ if rootWidget then
       botServerWindow.Data.ServerStatus:setText("CONNECTING...")
       ui.botServer:setColor('#FFF380')
       botServerWindow.Data.ServerStatus:setColor('#FFF380')
-    else 
+    else
       if BotServer._websocket then
         BotServer.terminate()
       end
+      BotServer.resetReconnect()
       botServerWindow.Data.ServerStatus:setText("DISCONNECTED")
       ui.botServer:setColor('#E3242B')
       botServerWindow.Data.ServerStatus:setColor('#E3242B')
       botServerWindow.Data.Participants:setText("-")
-      botServerWindow.Data.Members:setTooltip('') 
+      botServerWindow.Data.Members:setTooltip('')
       ServerMembers = {}
       serverCount = {}
     end
@@ -122,7 +123,7 @@ function initBotServerListenFunctions()
 
   -- list
   BotServer.listen("list", function(name, data)
-    serverCount = regexMatch(json.encode(data), regex)  
+    serverCount = regexMatch(json.encode(data), regex)
     ServerMembers = json.encode(data)
   end)
 
@@ -159,12 +160,12 @@ function initBotServerListenFunctions()
     if config.broadcasts then
       broadcastMessage(name..": "..message)
     end
-  end)  
+  end)
 end
 initBotServerListenFunctions()
 
 function updateStatusText()
-  if BotServer._websocket then 
+  if BotServer._websocket then
     botServerWindow.Data.ServerStatus:setText("CONNECTED")
     botServerWindow.Data.ServerStatus:setColor('#03AC13')
     ui.botServer:setColor('#03AC13')
@@ -182,7 +183,7 @@ function updateStatusText()
             text = text .. "\n" .. re[i][2]
           end
         end
-        botServerWindow.Data.Members:setTooltip(text) 
+        botServerWindow.Data.Members:setTooltip(text)
       end
     end
   else
