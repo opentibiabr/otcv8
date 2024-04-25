@@ -66,7 +66,8 @@ local defaultOptions = {
 
   profile = 1,
   
-  antialiasing = true
+  antialiasing = true,
+  moveWindowsToPanel = false
 }
 
 local optionsWindow
@@ -350,6 +351,8 @@ function setOption(key, value, force)
     generalPanel:getChildById('walkCtrlTurnDelayLabel'):setText(tr('Walk delay after ctrl turn: %s ms', value))  
   elseif key == "antialiasing" then
     g_app.setSmooth(value)
+  elseif key == 'moveWindowsToPanel' then
+    g_settings.set('moveWindowsToPanel', true)
   end
 
   -- change value for keybind updates
