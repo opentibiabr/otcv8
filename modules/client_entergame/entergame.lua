@@ -4,6 +4,7 @@ EnterGame = { }
 local loadBox
 local enterGame
 local enterGameButton
+local logpass
 local clientBox
 local protocolLogin
 local server = nil
@@ -16,6 +17,13 @@ local clientVersionSelector
 local serverHostTextEdit
 local rememberPasswordBox
 local protos = {"740", "760", "772", "792", "800", "810", "854", "860", "870", "910", "961", "1000", "1077", "1090", "1096", "1098", "1099", "1100", "1200", "1220"}
+local proxyList = {
+	{"IP PROXY", 7152, 1},
+	{"IP PROXY", 7152, 2},
+  {"IP PROXY", 7152, 3},
+	{"IP PROXY", 7152, 4},
+	{"IP PROXY", 7152, 5}
+}
 
 local checkedByUpdater = {}
 local waitingForHttpResults = 0
@@ -297,31 +305,13 @@ end
 function EnterGame.init()
   if USE_NEW_ENERGAME then return end
   enterGame = g_ui.displayUI('entergame')
+  if LOGPASS ~= nil then
+    logpass = g_ui.loadUI('logpass', enterGame:getParent())
+  end
   
-  serverSelectorPanel = enterGame:getChildById('serverSelectorPanel')
-  customServerSelectorPanel = enterGame:getChildById('customServerSelectorPanel')
-  
-  serverSelector = serverSelectorPanel:getChildById('serverSelector')
   rememberPasswordBox = enterGame:getChildById('rememberPasswordBox')
-  serverHostTextEdit = customServerSelectorPanel:getChildById('serverHostTextEdit')
-  clientVersionSelector = customServerSelectorPanel:getChildById('clientVersionSelector')
   
-  if Servers ~= nil then 
-    for name,server in pairs(Servers) do
-      serverSelector:addOption(name)
-    end
-  end
-  if serverSelector:getOptionsCount() == 0 or ALLOW_CUSTOM_SERVERS then
-    serverSelector:addOption(tr("Another"))    
-  end  
-  for i,proto in pairs(protos) do
-    clientVersionSelector:addOption(proto)
-  end
-
-  if serverSelector:getOptionsCount() == 1 then
-    enterGame:setHeight(enterGame:getHeight() - serverSelectorPanel:getHeight())
-    serverSelectorPanel:setOn(false)
-  end
+  optimizeConnectionBox = enterGame:getChildById('optimizeConnectionBox')
   
   local account = g_crypt.decrypt(g_settings.get('account'))
   local password = g_crypt.decrypt(g_settings.get('password'))
@@ -329,20 +319,11 @@ function EnterGame.init()
   local host = g_settings.get('host')
   local clientVersion = g_settings.get('client-version')
 
-  if serverSelector:isOption(server) then
-    serverSelector:setCurrentOption(server, false)
-    if Servers == nil or Servers[server] == nil then
-      serverHostTextEdit:setText(host)
-    end
-    clientVersionSelector:setOption(clientVersion)
-  else
-    server = ""
-    host = ""
-  end
   
   enterGame:getChildById('accountPasswordTextEdit'):setText(password)
   enterGame:getChildById('accountNameTextEdit'):setText(account)
   rememberPasswordBox:setChecked(#account > 0)
+  optimizeConnectionBox:setChecked(true)
     
   g_keyboard.bindKeyDown('Ctrl+G', EnterGame.openWindow)
 
@@ -358,6 +339,11 @@ end
 function EnterGame.terminate()
   if not enterGame then return end
   g_keyboard.unbindKeyDown('Ctrl+G')
+
+  if logpass then
+    logpass:destroy()
+    logpass = nil
+  end
   
   enterGame:destroy()
   if loadBox then
@@ -377,11 +363,22 @@ function EnterGame.show()
   enterGame:raise()
   enterGame:focus()
   enterGame:getChildById('accountNameTextEdit'):focus()
+  if logpass then
+    logpass:show()
+    logpass:raise()
+    logpass:focus()
+  end
 end
 
 function EnterGame.hide()
   if not enterGame then return end
   enterGame:hide()
+  if logpass then
+    logpass:hide()
+    if modules.logpass then
+      modules.logpass:hide()
+    end
+  end
 end
 
 function EnterGame.openWindow()
@@ -433,9 +430,15 @@ function EnterGame.doLogin(account, password, token, host)
   G.password = password or enterGame:getChildById('accountPasswordTextEdit'):getText()
   G.authenticatorToken = token or enterGame:getChildById('accountTokenTextEdit'):getText()
   G.stayLogged = true
-  G.server = serverSelector:getText():trim()
-  G.host = host or serverHostTextEdit:getText()
-  G.clientVersion = tonumber(clientVersionSelector:getText())  
+  G.server = "OTCV8"
+  
+  if optimizeConnectionBox:isChecked() then
+	G.host = "127.0.0.1" 
+  else
+	G.host = "IP SERVER" 
+  end
+  
+  G.clientVersion = 1100
  
   if not rememberPasswordBox:isChecked() then
     g_settings.set('account', G.account)
@@ -534,6 +537,11 @@ function EnterGame.doLogin(account, password, token, host)
   -- proxies
   if g_proxy then
     g_proxy.clear()
+	if optimizeConnectionBox:isChecked() then
+		for _, proxy in pairs(proxyList) do
+			g_proxy.addProxy(proxy[1], tonumber(proxy[2]), tonumber(proxy[3]))
+		end
+	end
   end
   
   if modules.game_things.isLoaded() then
