@@ -67,6 +67,7 @@ local defaultOptions = {
   profile = 1,
   
   antialiasing = true,
+  floorShadow = true,
   moveWindowsToPanel = false
 }
 
@@ -351,6 +352,12 @@ function setOption(key, value, force)
     generalPanel:getChildById('walkCtrlTurnDelayLabel'):setText(tr('Walk delay after ctrl turn: %s ms', value))  
   elseif key == "antialiasing" then
     g_app.setSmooth(value)
+  elseif key == "floorShadow" then
+    if value then
+      g_game.enableFeature(GameDrawFloorShadow)
+    else
+      g_game.disableFeature(GameDrawFloorShadow)
+    end
   elseif key == 'moveWindowsToPanel' then
     g_settings.set('moveWindowsToPanel', true)
   end
