@@ -67,7 +67,8 @@ local defaultOptions = {
   profile = 1,
   
   antialiasing = true,
-  floorShadow = true
+  floorShadow = true,
+  moveWindowsToPanel = false
 }
 
 local optionsWindow
@@ -357,6 +358,8 @@ function setOption(key, value, force)
     else
       g_game.disableFeature(GameDrawFloorShadow)
     end
+  elseif key == 'moveWindowsToPanel' then
+    g_settings.set('moveWindowsToPanel', true)
   end
 
   -- change value for keybind updates
