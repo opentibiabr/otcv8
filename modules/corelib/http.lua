@@ -158,6 +158,8 @@ function HTTP.onPost(operationId, url, err, data)
   if not err and operation.json then
     if data:len() == 0 then
       data = "null"
+    else
+      data = string.sub(data,string.find(data,"{"),string.find(data,"}"))
     end
     local status, result = pcall(function() return json.decode(data) end)
     if not status then
